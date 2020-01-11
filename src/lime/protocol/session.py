@@ -126,4 +126,4 @@ class Session(Envelope):
 class SessionListener:
 
     @staticmethod
-    def on_session(session): return None
+    def on_session(command): return None
