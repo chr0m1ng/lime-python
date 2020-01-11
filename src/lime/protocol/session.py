@@ -39,18 +39,18 @@ class Session(Envelope):
         else:
             raise ValueError('state must be a SessionState')
 
-    # encryptionOptions property
+    # encryption_options property
     @property
-    def encryptionOptions(self):
-        return self.__encryptionOptions
+    def encryption_options(self):
+        return self.__encryption_options
 
-    @encryptionOptions.setter
-    def encryptionOptions(self, value):
+    @encryption_options.setter
+    def encryption_options(self, value):
         if isinstance(value, list) and all(value, lambda v: isinstance(v, SessionEncryption)):
-            self.__encryptionOptions = value
+            self.__encryption_options = value
         else:
             raise ValueError(
-                'encryptionOptions must be a list of SessionEncryption')
+                'encryption_options must be a list of SessionEncryption')
 
     # encryption property
     @property
@@ -64,18 +64,18 @@ class Session(Envelope):
         else:
             raise ValueError('encryption must be a SessionEncryption')
 
-    # compressionOptions property
+    # compression_options property
     @property
-    def compressionOptions(self):
-        return self.__compressionOptions
+    def compression_options(self):
+        return self.__compression_options
 
-    @compressionOptions.setter
-    def compressionOptions(self, value):
+    @compression_options.setter
+    def compression_options(self, value):
         if isinstance(value, list) and all(value, lambda v: isinstance(v, SessionCompression)):
-            self.__compressionOptions = value
+            self.__compression_options = value
         else:
             raise ValueError(
-                'compressionOptions must be a list of SessionCompression')
+                'compression_options must be a list of SessionCompression')
 
     # compression property
     @property
