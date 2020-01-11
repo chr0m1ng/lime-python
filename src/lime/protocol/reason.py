@@ -3,11 +3,31 @@ class Reason:
     """
     Represents a known reason for events occurred during the client-server
     interactions.
-
-    params:
-        code: int
-        description?: str
     """
+
+    # code property
+    @property
+    def code(self):
+        return self.__code
+
+    @code.setter
+    def code(self, value):
+        if isinstance(value, int):
+            self.__code = value
+        else:
+            raise ValueError('code must be a int')
+
+    # description property
+    @property
+    def description(self):
+        return self.__description
+
+    @description.setter
+    def description(self, value):
+        if isinstance(value, str):
+            self.__description = value
+        else:
+            raise ValueError('description must be a str')
 
     def __init__(self, code, description=str()):
         self.code = code
