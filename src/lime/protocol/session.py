@@ -121,3 +121,9 @@ class Session(Envelope):
             self.__reason = value
         else:
             raise ValueError('reason must be a Reason')
+
+
+class SessionListener:
+
+    @staticmethod
+    def on_session(session): return None
