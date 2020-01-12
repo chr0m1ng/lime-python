@@ -1,5 +1,5 @@
-from envelope import Envelope
-from reason import Reason
+from .envelope import Envelope
+from .reason import Reason
 from enum import Enum
 
 
@@ -129,4 +129,4 @@ class Session(Envelope):
 class SessionListener:
 
     @staticmethod
-    def on_session(command): return None
+    def on_session(command): pass

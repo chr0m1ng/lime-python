@@ -1,5 +1,5 @@
-from envelope import Envelope
-from reason import Reason
+from .envelope import Envelope
+from .reason import Reason
 from enum import Enum
 
 
@@ -107,4 +107,4 @@ class Command(Envelope):
 class CommandListener:
 
     @staticmethod
-    def on_command(command): return None
+    def on_command(command): pass

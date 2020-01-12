@@ -1,5 +1,5 @@
-from envelope import Envelope
-from reason import Reason
+from .envelope import Envelope
+from .reason import Reason
 from enum import Enum
 
 
@@ -44,5 +44,4 @@ class Notification(Envelope):
 class NotificationListener:
 
     @staticmethod
-    def on_notification(command):
-        return None
+    def on_notification(command): pass

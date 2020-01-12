@@ -1,4 +1,4 @@
-from envelope import Envelope
+from .envelope import Envelope
 
 
 class Message(Envelope):
@@ -28,4 +28,4 @@ class Message(Envelope):
 class MessageListener:
 
     @staticmethod
-    def on_message(command): return None
+    def on_message(command): pass

@@ -80,4 +80,4 @@ class Envelope:
 class EnvelopeListener:
 
     @staticmethod
-    def on_envelope(envelope): return None
+    def on_envelope(envelope): pass
