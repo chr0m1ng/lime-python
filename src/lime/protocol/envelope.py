@@ -79,5 +79,4 @@ class Envelope:
 
 class EnvelopeListener:
 
-    @staticmethod
-    def on_envelope(envelope): pass
+    def on_envelope(self, envelope): pass

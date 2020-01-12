@@ -27,5 +27,4 @@ class Message(Envelope):
 
 class MessageListener:
 
-    @staticmethod
-    def on_message(command): pass
+    def on_message(self, command): pass

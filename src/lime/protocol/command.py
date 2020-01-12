@@ -106,5 +106,4 @@ class Command(Envelope):
 
 class CommandListener:
 
-    @staticmethod
-    def on_command(command): pass
+    def on_command(self, command): pass

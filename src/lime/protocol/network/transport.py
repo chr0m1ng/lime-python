@@ -28,23 +28,16 @@ class Transport(EnvelopeListener):
         else:
             raise ValueError('encryption must be a SessionEncryption')
 
-    @staticmethod
-    async def open(uri): pass
+    async def open(self, uri): pass
 
-    @staticmethod
-    async def close(): pass
+    async def close(self): pass
 
-    @staticmethod
-    def send(envelope): pass
+    def send(self, envelope): pass
 
-    @staticmethod
-    def get_supported_compression(): pass
+    def get_supported_compression(self): pass
 
-    @staticmethod
-    def set_compression(compression): pass
+    def set_compression(self, compression): pass
 
-    @staticmethod
-    def get_supported_encryption(): pass
+    def get_supported_encryption(self): pass
 
-    @staticmethod
-    def set_encryption(encryption): pass
+    def set_encryption(self, encryption): pass

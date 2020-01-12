@@ -128,5 +128,4 @@ class Session(Envelope):
 
 class SessionListener:
 
-    @staticmethod
-    def on_session(command): pass
+    def on_session(self, command): pass

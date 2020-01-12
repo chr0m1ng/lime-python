@@ -43,5 +43,4 @@ class Notification(Envelope):
 
 class NotificationListener:
 
-    @staticmethod
-    def on_notification(command): pass
+    def on_notification(self, command): pass
