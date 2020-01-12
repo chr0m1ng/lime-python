@@ -1,43 +1,7 @@
-class Reason:
-
-    """
-    Represents a known reason for events occurred during the client-server
-    interactions.
-    """
-
-    # code property
-    @property
-    def code(self):
-        return self.__code
-
-    @code.setter
-    def code(self, value):
-        if isinstance(value, int):
-            self.__code = value
-        else:
-            raise ValueError('code must be a int')
-
-    # description property
-    @property
-    def description(self):
-        return self.__description
-
-    @description.setter
-    def description(self, value):
-        if isinstance(value, str):
-            self.__description = value
-        else:
-            raise ValueError('description must be a str')
-
-    def __init__(self, code, description=str()):
-        self.code = code
-        self.description = description
-
-    def __str__(self):
-        return f'{self.description} (Code {self.code})'
+from enum import Enum
 
 
-class ReasonCodes:
+class ReasonCode(Enum):
 
     """
     Default server reason codes.
@@ -123,3 +87,42 @@ class ReasonCodes:
     GATEWAY_NOT_SUPPORTED = 84
     # General application processing error
     APPLICATION_ERROR = 101
+
+
+class Reason:
+
+    """
+    Represents a known reason for events occurred during the client-server
+    interactions.
+    """
+
+    # code property
+    @property
+    def code(self):
+        return self.__code
+
+    @code.setter
+    def code(self, value):
+        if isinstance(value, ReasonCode):
+            self.__code = value
+        else:
+            raise ValueError('code must be a ReasonCode')
+
+    # description property
+    @property
+    def description(self):
+        return self.__description
+
+    @description.setter
+    def description(self, value):
+        if isinstance(value, str):
+            self.__description = value
+        else:
+            raise ValueError('description must be a str')
+
+    def __init__(self, code, description=str()):
+        self.code = code
+        self.description = description
+
+    def __str__(self):
+        return f'{self.description} (Code {self.code.value})'

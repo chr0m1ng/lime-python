@@ -1,8 +1,9 @@
 from envelope import Envelope
 from reason import Reason
+from enum import Enum
 
 
-class SessionState:
+class SessionState(Enum):
 
     NEW = 'new'
     NEGOTIATING = 'negotiating'
@@ -13,13 +14,13 @@ class SessionState:
     FAILED = 'failed'
 
 
-class SessionEncryption:
+class SessionEncryption(Enum):
 
     NONE = 'none'
     TLS = 'tls'
 
 
-class SessionCompression:
+class SessionCompression(Enum):
 
     NONE = 'none'
     GZIP = 'gzip'
@@ -50,7 +51,8 @@ class Session(Envelope):
             self.__encryption_options = value
         else:
             raise ValueError(
-                'encryption_options must be a list of SessionEncryption')
+                'encryption_options must be a list of SessionEncryption'
+            )
 
     # encryption property
     @property
@@ -75,7 +77,8 @@ class Session(Envelope):
             self.__compression_options = value
         else:
             raise ValueError(
-                'compression_options must be a list of SessionCompression')
+                'compression_options must be a list of SessionCompression'
+            )
 
     # compression property
     @property

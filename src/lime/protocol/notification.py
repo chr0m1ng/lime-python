@@ -1,8 +1,9 @@
 from envelope import Envelope
 from reason import Reason
+from enum import Enum
 
 
-class NotificationEvent:
+class NotificationEvent(Enum):
 
     FAILED = 'failed'
     ACCEPTED = 'accepted'

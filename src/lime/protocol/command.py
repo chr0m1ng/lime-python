@@ -1,8 +1,9 @@
 from envelope import Envelope
 from reason import Reason
+from enum import Enum
 
 
-class CommandMethod:
+class CommandMethod(Enum):
 
     GET = 'get'
     SET = 'set'
@@ -13,7 +14,7 @@ class CommandMethod:
     MERGE = 'merge'
 
 
-class CommandStatus:
+class CommandStatus(Enum):
 
     SUCCESS = 'success'
     FAILURE = 'failure'
