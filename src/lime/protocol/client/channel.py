@@ -162,15 +162,8 @@ class Channel(MessageChannel, CommandChannel, NotificationChannel, SessionChanne
                 command = envelope
 
                 if command.status is not None:
-                    try:
-                        response_task = self.__command_futures[command.id]
-                    except KeyError:
-                        response_task = None
-                    finally:
-                        if response_task is not None:
-                            self.__command_futures[command.id].set_result(
-                                command
-                            )
+                    if command.id in self.__command_futures:
+                        self.__command_futures[command.id](command)
                         del self.__command_futures[command.id]
                         return
 
@@ -218,7 +211,7 @@ class Channel(MessageChannel, CommandChannel, NotificationChannel, SessionChanne
 
         response_future = loop.create_future()
 
-        self.__command_futures[command.id] = response_future
+        self.__command_futures[command.id] = response_future.set_result
 
         async def loop_command_timeout():
             await asyncio.sleep(timeout)
