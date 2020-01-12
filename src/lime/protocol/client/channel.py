@@ -140,6 +140,61 @@ class Channel(MessageChannel, CommandChannel, NotificationChannel, SessionChanne
     # Timout in seconds
     command_timeout = 6
 
+    def __init__(self, transport, auto_reply_pings, auto_notify_receipt):
+        self.auto_reply_pings = auto_reply_pings
+        self.auto_notify_receipt = auto_notify_receipt
+        self.transport = transport
+        self.__command_futures = dict()
+        self.state = SessionState.NEW
+
+        def transport_on_envelope(envelope):
+            # Message
+            if Envelope.is_message(envelope):
+                message = envelope
+                self.notify_message(message)
+                self.on_message(message)
+            # Notification
+            elif Envelope.is_notification(envelope):
+                notification = envelope
+                self.on_notification(notification)
+            # Command
+            elif Envelope.is_command(envelope):
+                command = envelope
+
+                if command.status is not None:
+                    try:
+                        response_task = self.__command_futures[command.id]
+                    except KeyError:
+                        response_task = None
+                    finally:
+                        if response_task is not None:
+                            self.__command_futures[command.id].set_result(
+                                command
+                            )
+                        del self.__command_futures[command.id]
+                        return
+
+                if self.auto_reply_pings and command.id is not None and \
+                        command.uri == '/ping' and command.method == CommandMethod.GET and \
+                        self.is_for_me(command):
+                    ping_command_response = Command()
+                    ping_command_response.id = command.id
+                    ping_command_response.to_n = command.from_n
+                    ping_command_response.method = CommandMethod.GET
+                    ping_command_response.status = CommandStatus.SUCCESS
+                    ping_command_response.resource_type = ContentTypes.PING
+                    ping_command_response.resource = dict()
+
+                    self.send_command(ping_command_response)
+
+                self.on_command(command)
+            # Session
+            elif Envelope.is_session(envelope):
+                session = envelope
+                self.on_session(session)
+
+        self.transport.on_envelope = transport_on_envelope
+
     def send(self, envelope):
         self.transport.send(envelope)
 
@@ -218,58 +273,3 @@ class Channel(MessageChannel, CommandChannel, NotificationChannel, SessionChanne
         return envelope.to_n is None or \
             envelope.to_n == self.local_node or \
             self.local_node[:len(envelope.to_n)] == envelope.to_n
-
-    def __init__(self, transport, auto_reply_pings, auto_notify_receipt):
-        self.auto_reply_pings = auto_reply_pings
-        self.auto_notify_receipt = auto_notify_receipt
-        self.transport = transport
-        self.__command_futures = dict()
-        self.state = SessionState.NEW
-
-        def transport_on_envelope(envelope):
-            # Message
-            if Envelope.is_message(envelope):
-                message = envelope
-                self.notify_message(message)
-                self.on_message(message)
-            # Notification
-            elif Envelope.is_notification(envelope):
-                notification = envelope
-                self.on_notification(notification)
-            # Command
-            elif Envelope.is_command(envelope):
-                command = envelope
-
-                if command.status is not None:
-                    try:
-                        response_task = self.__command_futures[command.id]
-                    except KeyError:
-                        response_task = None
-                    finally:
-                        if response_task is not None:
-                            self.__command_futures[command.id].set_result(
-                                command
-                            )
-                        del self.__command_futures[command.id]
-                        return
-
-                if self.auto_reply_pings and command.id is not None and \
-                        command.uri == '/ping' and command.method == CommandMethod.GET and \
-                        self.is_for_me(command):
-                    ping_command_response = Command()
-                    ping_command_response.id = command.id
-                    ping_command_response.to_n = command.from_n
-                    ping_command_response.method = CommandMethod.GET
-                    ping_command_response.status = CommandStatus.SUCCESS
-                    ping_command_response.resource_type = ContentTypes.PING
-                    ping_command_response.resource = dict()
-
-                    self.send_command(ping_command_response)
-
-                self.on_command(command)
-            # Session
-            elif Envelope.is_session(envelope):
-                session = envelope
-                self.on_session(session)
-
-        self.transport.on_envelope = transport_on_envelope
