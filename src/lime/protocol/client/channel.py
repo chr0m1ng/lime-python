@@ -11,32 +11,27 @@ import json
 
 class MessageChannel(MessageListener):
 
-    @staticmethod
-    def send_message(message): pass
+    def send_message(self, message): pass
 
 
 class CommandChannel(CommandListener):
 
-    @staticmethod
-    def send_command(command): pass
+    def send_command(self, command): pass
 
 
 class NotificationChannel(NotificationListener):
 
-    @staticmethod
-    def send_notification(notification): pass
+    def send_notification(self, notification): pass
 
 
 class SessionChannel(SessionListener):
 
-    @staticmethod
-    def send_session(session): pass
+    def send_session(self, session): pass
 
 
 class CommandProcessor(CommandListener):
 
-    @staticmethod
-    async def process_command(command, timeout): pass
+    def process_command(self, command, timeout): pass
 
 
 class Channel(MessageChannel, CommandChannel, NotificationChannel, SessionChannel, CommandProcessor):
@@ -203,7 +198,7 @@ class Channel(MessageChannel, CommandChannel, NotificationChannel, SessionChanne
             raise Exception(f'Cannot send in the {self.state.value} state')
         self.send(command)
 
-    async def process_command(self, command, timeout=Channel.command_timeout):
+    def process_command(self, command, timeout=Channel.command_timeout):
         try:
             loop = asyncio.get_running_loop()
         except RuntimeError:
