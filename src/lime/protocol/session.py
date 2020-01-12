@@ -46,7 +46,7 @@ class Session(Envelope):
 
     @encryption_options.setter
     def encryption_options(self, value):
-        if isinstance(value, list) and all(value, lambda v: isinstance(v, SessionEncryption)):
+        if isinstance(value, list) and all(isinstance(v, SessionEncryption) for v in value):
             self.__encryption_options = value
         else:
             raise ValueError(
@@ -71,7 +71,7 @@ class Session(Envelope):
 
     @compression_options.setter
     def compression_options(self, value):
-        if isinstance(value, list) and all(value, lambda v: isinstance(v, SessionCompression)):
+        if isinstance(value, list) and all(isinstance(v, SessionCompression) for v in value):
             self.__compression_options = value
         else:
             raise ValueError(
