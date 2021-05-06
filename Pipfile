@@ -6,8 +6,9 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-pyformat = "*"
 wemake-python-styleguide = "*"
+autopep8 = "*"
+pep8 = "*"
 
 [requires]
 python_version = "3.8"

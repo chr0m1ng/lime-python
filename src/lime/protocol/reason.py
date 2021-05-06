@@ -1,8 +1,5 @@
 class ReasonCode:
-
-    """
-    Default server reason codes.
-    """
+    """Default server reason codes."""
 
     # General error
     GENERAL_ERROR = 1
@@ -87,14 +84,17 @@ class ReasonCode:
 
 
 class Reason:
+    """A reason for events occurred during the client-server interactions."""
 
-    """
-    Represents a known reason for events occurred during the client-server
-    interactions.
-    """
-    def __init__(self, code=int(), description=str()):
+    def __init__(self, code: int, description: str):
         self.code = code
         self.description = description
 
     def __str__(self):
+        """
+        Override string.
+
+        Returns:
+            str
+        """
         return f'{self.description} (Code {self.code.value})'

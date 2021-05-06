@@ -1,11 +1,10 @@
-from .serializable import Serializable
 from abc import ABC
+from serializable import Serializable
+
 
 class Envelope(ABC, Serializable):
 
-    def __init__(self): pass
-
-    def __init__(self, id: str, from_n: str, to: str, pp: str, metadata):
+    def __init__(self, id: str, from_n: str, to: str, pp: str, metadata: dict):
         self.id = id
         self.from_n = from_n
         self.to = to
@@ -14,4 +13,6 @@ class Envelope(ABC, Serializable):
 
 
 class EnvelopeListener(ABC):
-    def on_envelope(envelope: Envelope): pass
+
+    def on_envelope(self, envelope: Envelope):
+        pass
