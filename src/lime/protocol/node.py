@@ -18,6 +18,17 @@ class Node:
         """
         return self.identity
 
+    def __eq__(self, otr) -> bool:
+        """Compare two Nodes.
+
+        Args:
+            otr: Node to be compared with
+
+        Returns:
+            bool: Returns if Nodes are equal
+        """
+        return self.identity == otr.identity and self.instance == otr.instance
+
     def __str__(self) -> str:
         """Represent Node as a string.
 
