@@ -1,4 +1,3 @@
-from unittest import TestCase, main
 from src import Serializable
 
 
@@ -20,6 +19,8 @@ class TestSerializabe:
         # Arrange
 
         class Mock(Serializable):
+            batata = 123
+
             def __init__(self):
                 self.mock = 'value'
                 self.some_n = 123

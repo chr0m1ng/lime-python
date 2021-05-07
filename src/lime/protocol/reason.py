@@ -91,10 +91,9 @@ class Reason:
         self.description = description
 
     def __str__(self):
-        """
-        Override string.
+        """Override str representation.
 
         Returns:
-            str
+            str: description with code
         """
         return f'{self.description} (Code {self.code.value})'

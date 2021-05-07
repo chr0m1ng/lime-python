@@ -1,5 +1,5 @@
 from abc import ABC
-from serializable import Serializable
+from .serializable import Serializable
 
 
 class Envelope(ABC, Serializable):

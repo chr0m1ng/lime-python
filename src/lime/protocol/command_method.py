@@ -1,4 +1,6 @@
 class CommandMethod:
+    """Command methods."""
+
     GET = 'get'
     SET = 'set'
     DELETE = 'delete'
