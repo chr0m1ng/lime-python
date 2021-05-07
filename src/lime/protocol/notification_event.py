@@ -1,4 +1,6 @@
 class NotificationEvent:
+    """Notification Events."""
+
     FAILED = 'failed'
     ACCEPTED = 'accepted'
     VALIDATED = 'validated'

@@ -1,5 +1,31 @@
-PRIVATE_TOKEN = '_'
+PRIVATE_TOKEN = '_'  # noqa: S105
+NODE_KEY_TOKEN = '_n'  # noqa: S105
+
 
 class Serializable:
-    def to_json(self):
-        return {k: v for k, v in vars(self).items() if not k.startswith(PRIVATE_TOKEN)}
+    """Serializable objects to json."""
+
+    def to_json(self) -> dict:
+        """
+        Transform class properties to json.
+
+        Returns:
+            dict
+        """
+        return {
+            self.normalize_key(key): value
+            for key, value in self.__dict__.items()  # noqa: WPS110
+            if not key.startswith(PRIVATE_TOKEN)
+        }
+
+    def normalize_key(self, key: str) -> str:
+        """
+        Normalize a class property name.
+
+        Args:
+            key: (str) property name
+
+        Returns:
+            str
+        """
+        return key.replace(NODE_KEY_TOKEN, str())
