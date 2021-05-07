@@ -9,6 +9,8 @@ verify_ssl = true
 wemake-python-styleguide = "*"
 autopep8 = "*"
 pep8 = "*"
+pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.8"

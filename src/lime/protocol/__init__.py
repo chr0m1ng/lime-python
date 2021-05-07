@@ -1,1 +1,1 @@
-from protocol.serializable import Serializable
+from .serializable import Serializable
