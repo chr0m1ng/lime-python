@@ -1,3 +1,5 @@
+from node import Node
+
 DOMAIN_SEPARATOR = '@'
 INSTANCE_SEPARATOR = '/'
 
@@ -56,5 +58,7 @@ class Identity:
         """  # noqa: DAR103
         if (isinstance(possible_identity, Identity)):
             return possible_identity
+        elif (isinstance(possible_identity, Node)):
+            return possible_identity.identity
 
         return Identity.parse_str(possible_identity)
