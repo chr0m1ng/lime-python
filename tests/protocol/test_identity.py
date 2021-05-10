@@ -1,4 +1,4 @@
-from src import Identity, Node
+from src import Node, Identity
 
 TEST_IDENTITY_DOMAIN = 'take.net'
 TEST_IDENTITY_NAME = 'test'

@@ -1,5 +1,3 @@
-from node import Node
-
 DOMAIN_SEPARATOR = '@'
 INSTANCE_SEPARATOR = '/'
 
@@ -56,6 +54,8 @@ class Identity:
         Returns:
             Identity: the created Identity
         """  # noqa: DAR103
+        from .node import Node  # noqa WPS433
+
         if (isinstance(possible_identity, Identity)):
             return possible_identity
         elif (isinstance(possible_identity, Node)):

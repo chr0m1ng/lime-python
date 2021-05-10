@@ -1,16 +1,14 @@
-from identity import Identity
-
 DOMAIN_SEPARATOR = '@'
 
 
 class Node:
     """Node represents a identity with an instance."""
 
-    def __init__(self, identity: Identity = None, instance: str = None):
+    def __init__(self, identity=None, instance: str = None):
         self.identity = identity
         self.instance = instance
 
-    def to_identity(self) -> Identity:
+    def to_identity(self):
         """Parse a identity into a Node.
 
         Returns:
@@ -57,7 +55,7 @@ class Node:
         return Node(name, domain)
 
     @staticmethod
-    def parse(possible_node: str | Identity):
+    def parse(possible_node):
         """Parse a possible node into a Node.
 
         Args:
@@ -66,6 +64,8 @@ class Node:
         Returns:
             [Node]: Returns a node object
         """
+        from .identity import Identity  # NOQA WPS433
+
         if isinstance(possible_node, Node):
             return possible_node
         else:
