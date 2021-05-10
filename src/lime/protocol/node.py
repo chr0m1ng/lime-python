@@ -1,4 +1,5 @@
 DOMAIN_SEPARATOR = '@'
+INSTANCE_SEPARATOR = '/'
 
 
 class Node:
@@ -48,11 +49,17 @@ class Node:
         Returns:
             str: Node object
         """
+        from .identity import Identity  # NOQA WPS433
+
         props = possible_node.split(DOMAIN_SEPARATOR)
         if len(props) < 2:
             return None
-        name, domain = props
-        return Node(name, domain)
+        name, instance_domain = props
+        props = instance_domain.split(INSTANCE_SEPARATOR)
+        if len(props) == 2:
+            domain, instance = props
+            return Node(Identity(name, domain), instance)
+        return Node(Identity(name, instance_domain))
 
     @staticmethod
     def parse(possible_node):
@@ -71,5 +78,5 @@ class Node:
         else:
             identity = Identity.parse(possible_node)
             if identity is not None:
-                instance = str(possible_node).replace(identity, str())
+                instance = str(possible_node).replace(str(identity), str())
                 return Node(identity, instance)
