@@ -25,7 +25,8 @@ class Node:
         Returns:
             bool: true if objects are equal.
         """
-        return self.identity == other.identity and self.instance == other.instance  # noqa: E501
+        return self.identity == other.identity \
+            and self.instance == other.instance
 
     def __str__(self) -> str:
         """Represent Node as a string.

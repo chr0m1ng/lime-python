@@ -1,7 +1,5 @@
 from .constants import CommonConstants
 
-INSTANCE_SEPARATOR = '/'
-
 
 class Identity:
     """Represents an identity in a domain."""
@@ -43,7 +41,10 @@ class Identity:
         if len(props) < 2:
             return None
         name, domain = props
-        return Identity(name, domain.split(INSTANCE_SEPARATOR)[0])
+        return Identity(
+            name,
+            domain.split(CommonConstants.INSTANCE_SEPARATOR)[0]
+        )
 
     @staticmethod
     def parse(possible_identity: str):
