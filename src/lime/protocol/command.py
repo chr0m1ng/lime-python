@@ -5,7 +5,7 @@ from .envelope import Envelope
 from .reason import Reason
 
 
-class Command(ABC, Envelope):  # noqa: WPS230
+class Command(Envelope):  # noqa: WPS230
     """Envelope representation."""
 
     def __init__(

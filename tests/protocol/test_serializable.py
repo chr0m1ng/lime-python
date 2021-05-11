@@ -1,7 +1,7 @@
 from src import Serializable
 
 
-class TestSerializabe:
+class TestSerializable:
     def test_normalize_key(self):
         # Arrange
         node_key = 'from_n'

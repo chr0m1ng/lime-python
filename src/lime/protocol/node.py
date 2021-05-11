@@ -17,16 +17,16 @@ class Node:
         """
         return self.identity
 
-    def __eq__(self, otr) -> bool:
-        """Compare two Nodes.
+    def __eq__(self, other) -> bool:
+        """Override equality comparision.
 
         Args:
-            otr: Node to be compared with
+            other (any): other object
 
         Returns:
-            bool: Returns if Nodes are equal
+            bool: true if objects are equal.
         """
-        return self.identity == otr.identity and self.instance == otr.instance
+        return self.identity == other.identity and self.instance == other.instance  # noqa: E501
 
     def __str__(self) -> str:
         """Represent Node as a string.
@@ -66,7 +66,7 @@ class Node:
         """Parse a possible node into a Node.
 
         Args:
-            possible_node (str|Identity|Node): possible Node object
+            possible_node (str | Identity| Node): possible Node object
 
         Returns:
             [Node]: Returns a node object
@@ -75,8 +75,7 @@ class Node:
 
         if isinstance(possible_node, Node):
             return possible_node
-        else:
-            identity = Identity.parse(possible_node)
-            if identity is not None:
-                instance = str(possible_node).replace(str(identity), str())
-                return Node(identity, instance)
+        elif isinstance(possible_node, Identity):
+            return Node(possible_node)
+
+        return Node.parse_str(possible_node)

@@ -6,7 +6,7 @@ from .session_encryption import SessionEncryption
 from .session_state import SessionState
 
 
-class Session(ABC, Envelope):  # noqa: WPS230
+class Session(Envelope):  # noqa: WPS230
     """Session representation."""
 
     def __init__(
