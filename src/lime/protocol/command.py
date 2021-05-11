@@ -5,17 +5,19 @@ from .envelope import Envelope
 from .reason import Reason
 
 
-class Command(ABC, Envelope):  # noqa WPS230
+class Command(ABC, Envelope):  # noqa: WPS230
     """Envelope representation."""
 
-    def __init__(self,
-                 uri: str = None,
-                 type_n: str = None,
-                 resource: str = None,
-                 method: CommandMethod = None,
-                 status: CommandStatus = None,
-                 reason: Reason = None,
-                 timeout: bool = None):
+    def __init__(
+        self,
+        uri: str = None,
+        type_n: str = None,
+        resource: str = None,
+        method: CommandMethod = None,
+        status: CommandStatus = None,
+        reason: Reason = None,
+        timeout: bool = None
+    ):
 
         self.uri = uri
         self.type_n = type_n
