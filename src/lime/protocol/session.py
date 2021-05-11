@@ -6,18 +6,20 @@ from .session_encryption import SessionEncryption
 from .session_state import SessionState
 
 
-class Session(ABC, Envelope):
+class Session(ABC, Envelope):  # noqa: WPS230
     """Session representation."""
 
-    def __init__(self,
-                 state: SessionState = None,
-                 encryption_options: list = None,
-                 encryption: SessionEncryption = None,
-                 compression_options: list = None,
-                 compression: SessionCompression() = None,
-                 scheme: str = None,
-                 authentication=None,
-                 reason: Reason = None):
+    def __init__(
+        self,
+        state: SessionState = None,
+        encryption_options: list = None,
+        encryption: SessionEncryption = None,
+        compression_options: list = None,
+        compression: SessionCompression() = None,
+        scheme: str = None,
+        authentication=None,
+        reason: Reason = None
+    ):
 
         self.state = state
         self.encryption_options = encryption_options
