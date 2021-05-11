@@ -1,9 +1,7 @@
 from abc import ABC
+from .constants import SessionCompression, SessionEncryption, SessionState
 from .envelope import Envelope
 from .reason import Reason
-from .session_compression import SessionCompression
-from .session_encryption import SessionEncryption
-from .session_state import SessionState
 
 
 class Session(Envelope):  # noqa: WPS230

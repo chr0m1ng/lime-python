@@ -1,5 +1,4 @@
-DOMAIN_SEPARATOR = '@'
-INSTANCE_SEPARATOR = '/'
+from .constants import CommonConstants
 
 
 class Node:
@@ -51,11 +50,11 @@ class Node:
         """
         from .identity import Identity  # noqa: WPS433
 
-        props = possible_node.split(DOMAIN_SEPARATOR)
+        props = possible_node.split(CommonConstants.DOMAIN_SEPARATOR)
         if len(props) < 2:
             return None
         name, instance_domain = props
-        props = instance_domain.split(INSTANCE_SEPARATOR)
+        props = instance_domain.split(CommonConstants.INSTANCE_SEPARATOR)
         if len(props) == 2:
             domain, instance = props
             return Node(Identity(name, domain), instance)

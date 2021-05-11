@@ -1,4 +1,5 @@
-DOMAIN_SEPARATOR = '@'
+from .constants import CommonConstants
+
 INSTANCE_SEPARATOR = '/'
 
 
@@ -38,7 +39,7 @@ class Identity:
         Returns:
             Identity: the created Identity
         """
-        props = possible_identity.split(DOMAIN_SEPARATOR)
+        props = possible_identity.split(CommonConstants.DOMAIN_SEPARATOR)
         if len(props) < 2:
             return None
         name, domain = props

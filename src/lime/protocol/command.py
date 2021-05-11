@@ -1,6 +1,5 @@
 from abc import ABC
-from .command_method import CommandMethod
-from .command_status import CommandStatus
+from .constants import CommandMethod, CommandStatus
 from .envelope import Envelope
 from .reason import Reason
 
