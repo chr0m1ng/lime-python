@@ -4,10 +4,14 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
 
 [packages]
-pyformat = "*"
 wemake-python-styleguide = "*"
+autopep8 = "*"
+pep8 = "*"
+pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.8"
