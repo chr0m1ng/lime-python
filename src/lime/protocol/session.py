@@ -1,4 +1,4 @@
-from .constants import SessionCompression, SessionEncryption, SessionState
+from typing import List
 from .envelope import Envelope
 from .reason import Reason
 
@@ -8,11 +8,11 @@ class Session(Envelope):  # noqa: WPS230
 
     def __init__(
         self,
-        state: SessionState = None,
-        encryption_options: list = None,
-        encryption: SessionEncryption = None,
-        compression_options: list = None,
-        compression: SessionCompression() = None,
+        state: str,
+        encryption_options: List[str] = None,
+        encryption: str = None,
+        compression_options: List[str] = None,
+        compression: str = None,
         scheme: str = None,
         authentication=None,
         reason: Reason = None

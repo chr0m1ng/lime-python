@@ -9,6 +9,6 @@ class CommandListener(ABC):
         """Handle callback to handle a received command.
 
         Args:
-            command (Command): the received command
+            command (Command): the received Command
         """
         pass
