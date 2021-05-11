@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from typing import List
 from ..envelope import Envelope
 from ..listeners import EnvelopeListener
@@ -10,6 +11,7 @@ class Transport(EnvelopeListener):
         self.compression = compression
         self.encryption = encryption
 
+    @abstractmethod
     def open(self, uri: str):
         """Open a new connection.
 
@@ -18,10 +20,12 @@ class Transport(EnvelopeListener):
         """
         pass
 
+    @abstractmethod
     def close(self):
         """Close a open connection."""
         pass
 
+    @abstractmethod
     def send(self, envelope: Envelope):
         """Send a Envelope to the server.
 
@@ -30,6 +34,7 @@ class Transport(EnvelopeListener):
         """
         pass
 
+    @abstractmethod
     def get_supported_compression(self) -> List[str]:
         """Get supported compressions by the server.
 
@@ -38,6 +43,7 @@ class Transport(EnvelopeListener):
         """  # noqa: DAR202
         pass
 
+    @abstractmethod
     def set_compression(self, compression: str):
         """Set a compression to use with the server.
 
@@ -46,6 +52,7 @@ class Transport(EnvelopeListener):
         """  # noqa: DAR103
         pass
 
+    @abstractmethod
     def get_supported_encryption(self) -> List[str]:
         """Get supported encryptions by the server.
 
@@ -54,6 +61,7 @@ class Transport(EnvelopeListener):
         """  # noqa: DAR202
         pass
 
+    @abstractmethod
     def set_encryption(self, encryption: str):
         """Set a encryption to use with the server.
 

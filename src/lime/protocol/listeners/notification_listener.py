@@ -1,10 +1,11 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from ..notification import Notification
 
 
 class NotificationListener(ABC):
     """Notification listener callback."""
 
+    @abstractmethod
     def on_notification(self, notification: Notification):
         """Handle callback to handle a received notification.
 

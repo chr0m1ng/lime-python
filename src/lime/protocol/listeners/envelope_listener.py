@@ -1,10 +1,11 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from ..envelope import Envelope
 
 
 class EnvelopeListener(ABC):
     """Envelope listener callback."""
 
+    @abstractmethod
     def on_envelope(self, envelope: Envelope):
         """Handle callback to handle a received Envelope.
 
