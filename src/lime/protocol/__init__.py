@@ -1,6 +1,7 @@
 from .serializable import *
 from .command_method import *
 from .command_status import *
+from .command import *
 from .envelope import *
 from .node import *
 from .identity import *
