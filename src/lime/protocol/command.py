@@ -6,7 +6,7 @@ from .reason import Reason
 
 
 class Command(Envelope):  # noqa: WPS230
-    """Envelope representation."""
+    """Command representation."""
 
     def __init__(
         self,
