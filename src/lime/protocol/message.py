@@ -1,5 +1,5 @@
-from .envelope import Envelope
 from abc import ABC
+from .envelope import Envelope
 
 
 class Message(Envelope):
@@ -14,7 +14,7 @@ class MessageListener(ABC):
     """Message listener callback."""
 
     def on_message(self, command: Message):
-        """Handle callback to received event
+        """Handle callback to received event.
 
         Args:
             command (Message): Command being received
