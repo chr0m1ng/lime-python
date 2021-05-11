@@ -1,4 +1,3 @@
-from abc import ABC
 from .constants import CommandMethod, CommandStatus
 from .envelope import Envelope
 from .reason import Reason
@@ -25,15 +24,3 @@ class Command(Envelope):  # noqa: WPS230
         self.status = status
         self.reason = reason
         self.timeout = timeout
-
-
-class CommandListener(ABC):
-    """Command listener callback."""
-
-    def on_listener(self, command: Command):
-        """Handle callback to handle a received command.
-
-        Args:
-            command (Command): the received command
-        """
-        pass
