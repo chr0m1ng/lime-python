@@ -1,11 +1,12 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from ..command import Command
 
 
 class CommandListener(ABC):
     """Command listener callback."""
 
-    def on_listener(self, command: Command):
+    @abstractmethod
+    def on_command(self, command: Command):
         """Handle callback to handle a received command.
 
         Args:

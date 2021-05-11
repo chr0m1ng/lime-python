@@ -1,10 +1,11 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from ..session import Session
 
 
 class SessionListener(ABC):
     """Session Listener callback."""
 
+    @abstractmethod
     def on_session(self, session: Session):
         """Handle callback to handle a received session.
 

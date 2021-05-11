@@ -1,10 +1,11 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from ..message import Message
 
 
 class MessageListener(ABC):
     """Message listener callback."""
 
+    @abstractmethod
     def on_message(self, message: Message):
         """Handle callback to handle a received Message.
 
