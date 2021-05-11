@@ -1,10 +1,11 @@
+from ..constants import AuthenticationScheme
 from .authentication import Authentication
 
 
 class ExternalAuthentication(Authentication):
     """External authentication representation."""
 
-    def __init__(self, scheme: str, token: str, issuer: str):
-        super().__init__(scheme)
+    def __init__(self, token: str, issuer: str):
+        super().__init__(AuthenticationScheme.EXTERNAL)
         self.token = token
         self.issuer = issuer

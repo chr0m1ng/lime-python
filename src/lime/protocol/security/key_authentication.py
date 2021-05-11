@@ -1,9 +1,10 @@
+from ..constants import AuthenticationScheme
 from .authentication import Authentication
 
 
-class ExternalAuthentication(Authentication):
+class KeyAuthentication(Authentication):
     """Key authentication representation."""
 
-    def __init__(self, scheme: str, key: str):
-        super().__init__(scheme)
+    def __init__(self, key: str):
+        super().__init__(AuthenticationScheme.KEY)
         self.key = key
