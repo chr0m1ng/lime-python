@@ -3,12 +3,12 @@ from ..session import Session
 
 
 class SessionListener(ABC):
-    """Session Listener."""
+    """Session Listener callback."""
 
-    def on_session(self, command: Session):
-        """Handle session received.
+    def on_session(self, session: Session):
+        """Handle callback to handle a received session.
 
         Args:
-            command (Session): command to be received
+            session (Session): the received Session
         """
         pass

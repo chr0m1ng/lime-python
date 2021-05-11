@@ -3,12 +3,12 @@ from ..envelope import Envelope
 
 
 class EnvelopeListener(ABC):
-    """Envelope listener callbacks."""
+    """Envelope listener callback."""
 
     def on_envelope(self, envelope: Envelope):
-        """Handle callback to envelope received event.
+        """Handle callback to handle a received Envelope.
 
         Args:
-            envelope (Envelope): the received envelope
+            envelope (Envelope): the received Envelope
         """
         pass

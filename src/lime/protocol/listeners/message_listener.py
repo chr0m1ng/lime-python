@@ -5,10 +5,10 @@ from ..message import Message
 class MessageListener(ABC):
     """Message listener callback."""
 
-    def on_message(self, command: Message):
-        """Handle callback to received event.
+    def on_message(self, message: Message):
+        """Handle callback to handle a received Message.
 
         Args:
-            command (Message): Command being received
+            message (Message): the received Message
         """
         pass
