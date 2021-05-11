@@ -1,3 +1,4 @@
+from typing import List
 from ..envelope import Envelope
 from ..listeners import EnvelopeListener
 
@@ -29,7 +30,7 @@ class Transport(EnvelopeListener):
         """
         pass
 
-    def get_supported_compression(self) -> list[str]:
+    def get_supported_compression(self) -> List[str]:
         """Get supported compressions by the server.
 
         Returns:
@@ -45,7 +46,7 @@ class Transport(EnvelopeListener):
         """  # noqa: DAR103
         pass
 
-    def get_supported_encryption(self) -> list[str]:
+    def get_supported_encryption(self) -> List[str]:
         """Get supported encryptions by the server.
 
         Returns:
