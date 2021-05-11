@@ -1,5 +1,5 @@
 from abc import ABC
-from src.lime.protocol import Message
+from ..message import Message
 
 
 class MessageListener(ABC):

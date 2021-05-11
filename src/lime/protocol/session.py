@@ -1,4 +1,3 @@
-from abc import ABC
 from .constants import SessionCompression, SessionEncryption, SessionState
 from .envelope import Envelope
 from .reason import Reason
@@ -27,15 +26,3 @@ class Session(Envelope):  # noqa: WPS230
         self.scheme = scheme
         self.authentication = authentication
         self.reason = reason
-
-
-class SessionListener(ABC):
-    """Session Listener."""
-
-    def on_session(self, command: Session):
-        """Handle session received.
-
-        Args:
-            command (Session): command to be received
-        """
-        pass

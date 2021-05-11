@@ -1,5 +1,5 @@
 from abc import ABC
-from src.lime.protocol import Command
+from ..command import Command
 
 
 class CommandListener(ABC):
