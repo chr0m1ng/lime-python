@@ -33,7 +33,7 @@ class Node:
         Returns:
             str: Node as string
         """
-        if self.instance is not None:
+        if self.instance is None:
             return str(self.identity)
 
         return f'{self.identity}/{self.instance}'
