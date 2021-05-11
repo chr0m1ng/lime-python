@@ -49,7 +49,7 @@ class Node:
         Returns:
             str: Node object
         """
-        from .identity import Identity  # NOQA WPS433
+        from .identity import Identity  # noqa: WPS433
 
         props = possible_node.split(DOMAIN_SEPARATOR)
         if len(props) < 2:
@@ -71,7 +71,7 @@ class Node:
         Returns:
             [Node]: Returns a node object
         """
-        from .identity import Identity  # NOQA WPS433
+        from .identity import Identity  # noqa: WPS433
 
         if isinstance(possible_node, Node):
             return possible_node
