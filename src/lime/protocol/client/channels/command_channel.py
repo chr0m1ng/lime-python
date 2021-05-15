@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from ...command import Command
 from ...listeners import CommandListener
 
@@ -5,7 +6,8 @@ from ...listeners import CommandListener
 class CommandChannel(CommandListener):
     """Command Channel."""
 
-    def send_command(self, command: Command):
+    @abstractmethod
+    def send_command(self, command: Command) -> None:
         """Send a Command.
 
         Args:

@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from ...listeners import SessionListener
 from ...session import Session
 
@@ -5,7 +6,8 @@ from ...session import Session
 class SessionChannel(SessionListener):
     """Session Channel."""
 
-    def send_session(self, session: Session):
+    @abstractmethod
+    def send_session(self, session: Session) -> None:
         """Send a Session.
 
         Args:

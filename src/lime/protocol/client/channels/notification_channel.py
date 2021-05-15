@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from ...listeners import NotificationListener
 from ...notification import Notification
 
@@ -5,7 +6,8 @@ from ...notification import Notification
 class NotificationChannel(NotificationListener):
     """Notification Channel."""
 
-    def send_notification(self, notification: Notification):
+    @abstractmethod
+    def send_notification(self, notification: Notification) -> None:
         """Send a Notification.
 
         Args:
