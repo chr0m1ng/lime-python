@@ -2,7 +2,7 @@ from .envelope import Envelope
 from .reason import Reason
 
 
-class Command(Envelope):  # noqa: WPS230
+class Command(Envelope):
     """Command representation."""
 
     def __init__(

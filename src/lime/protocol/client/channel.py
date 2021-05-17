@@ -3,17 +3,20 @@ from functools import partial
 from typing import Callable, Dict, List
 
 from ..command import Command
-from ..constants import NotificationEvent, SessionState
+from ..constants import (CommandMethod, CommandStatus, ContentTypes,
+                         NotificationEvent, SessionState, UriTemplates)
 from ..envelope import Envelope
 from ..message import Message
 from ..network import Transport
 from ..notification import Notification
 from ..session import Session
-from .channels import CommandChannel, MessageChannel, NotificationChannel, SessionChannel  # noqa: 319
-from .command_processor import CommandProcessor  # noqa: I005
+from ..utilities import DictToClass
+from .channels import (CommandChannel, MessageChannel, NotificationChannel,
+                       SessionChannel)
+from .command_processor import CommandProcessor
 
 
-class Channel(  # noqa: WPS215, WPS230
+class Channel(
     MessageChannel,
     NotificationChannel,
     SessionChannel,
@@ -100,6 +103,40 @@ class Channel(  # noqa: WPS215, WPS230
                 f'The following command processing has timed out: {command}'
             )
 
+    def on_envelope(self, envelope: dict) -> None:  # noqa: WPS231
+        """Handle received envelope on transport.
+
+        Args:
+            envelope (dict): The received raw envelope
+        """
+        envelope: Envelope = DictToClass(envelope, Envelope)
+
+        if Envelope.is_message(envelope):
+            envelope.__class__ = Message
+            self.__notify_message(envelope)
+            self.on_message(envelope)
+
+        elif Envelope.is_notification(envelope):
+            envelope.__class__ = Notification
+            self.on_notification(envelope)
+
+        elif Envelope.is_session(envelope):
+            envelope.__class__ = Session
+            self.on_session(envelope)
+
+        elif Envelope.is_command(envelope):
+            envelope.__class__ = Command
+            if envelope.status:
+                set_result = self.command_resolves.get(envelope.id)
+
+                if set_result:
+                    set_result(envelope)
+                    del self.command_resolves[envelope.id]
+                    return
+            if self.__should_reply_command(envelope):
+                self.send_command(self.__create_ping_command_reply(envelope))
+            self.on_command(envelope)
+
     def __ensure_state(self, states: List[str], is_allowed: bool) -> None:
         if self.state in states ^ is_allowed:
             raise ValueError(f'Cannot send in the {self.state} state')
@@ -109,7 +146,7 @@ class Channel(  # noqa: WPS215, WPS230
         self.__send(envelope)
 
     def __send(self, envelope: Envelope) -> None:
-        self.transport.send(envelope)
+        self.transport.send(envelope.to_json())
 
     def __notify_message(self, message: Message) -> None:
         if self.__should_notify_message(message):
@@ -128,3 +165,21 @@ class Channel(  # noqa: WPS215, WPS230
         return envelope.to is None or \
             envelope.to == self.local_node or \
             self.local_node.startswith(envelope.to)
+
+    def __should_reply_command(self, command: Command):
+        return self.auto_reply_pings and \
+            command.id and \
+            command.uri == UriTemplates.PING and \
+            command.method == CommandMethod.GET and \
+            self.is_for_me(command)  # noqa: WPS222
+
+    def __create_ping_command_reply(self, command: Command) -> Command:
+        reply = Command(
+            method=CommandMethod.GET,
+            status=CommandStatus.SUCCESS,
+            type_n=ContentTypes.PING,
+            resource={},
+        )
+        reply.id = command.id
+        reply.to = command.from_n
+        return reply

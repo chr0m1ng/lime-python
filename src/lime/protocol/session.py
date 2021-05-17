@@ -4,7 +4,7 @@ from .envelope import Envelope
 from .reason import Reason
 
 
-class Session(Envelope):  # noqa: WPS230
+class Session(Envelope):
     """Session representation."""
 
     def __init__(
