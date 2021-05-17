@@ -1,12 +1,12 @@
-from abc import abstractmethod
+from ..command import Command
 from ..constants import SessionState
-from .command_processor import CommandProcessor
-from .channels import MessageChannel, NotificationChannel, SessionChannel, CommandChannel  # noqa: E501
 from ..envelope import Envelope
 from ..message import Message
-from ..command import Command
-from ..notification import Notification
 from ..network import Transport
+from ..notification import Notification
+from .channels import (CommandChannel, MessageChannel,
+                       NotificationChannel, SessionChannel)  # noqa: 319
+from .command_processor import CommandProcessor
 
 
 class Channel(  # noqa: WPS215
@@ -45,23 +45,35 @@ class Channel(  # noqa: WPS215
         self.__send(envelope)
 
     def send_message(self, message: Message):
-        """Send message.
+        """Send a message.
+
         Args:
-            message (Message): message to be sended
+            message (Message): message to be sent
         """
         self.send_envelope(message)
 
     def on_message(self, message: Message):
+        """Handle callback to handle a received Message.
+
+        Args:
+            message (Message): the received Message
+        """
         pass
 
     def send_notification(self, notification: Notification):
-        """Send notification.
-         Args:
-             notification (Notification): notification to be sended
-         """
+        """Send a Notification.
+
+        Args:
+            notification (Notification): Notification to be sent
+        """
         self.send_envelope(notification)
 
     def on_notification(self, notification: Notification):
+        """Handle callback to handle a received notification.
+
+        Args:
+            notification (Notification): the received Notification
+        """
         pass
 
     def __send(self, envelope: Envelope):

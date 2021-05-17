@@ -1,4 +1,5 @@
 from abc import ABC
+
 from .reason import Reason
 from .serializable import Serializable
 

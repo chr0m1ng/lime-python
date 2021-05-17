@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from typing import List
+
 from ..envelope import Envelope
 from ..listeners import EnvelopeListener
 

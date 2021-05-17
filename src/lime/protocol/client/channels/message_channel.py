@@ -1,4 +1,5 @@
 from abc import abstractmethod
+
 from ...listeners import MessageListener
 from ...message import Message
 

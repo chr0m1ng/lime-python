@@ -12,6 +12,7 @@ autopep8 = "*"
 pep8 = "*"
 pytest = "*"
 pytest-cov = "*"
+isort = "*"
 
 [requires]
 python_version = "3.8"

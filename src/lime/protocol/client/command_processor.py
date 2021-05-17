@@ -1,4 +1,5 @@
 from abc import abstractmethod
+
 from ..command import Command
 from ..listeners import CommandListener
 
