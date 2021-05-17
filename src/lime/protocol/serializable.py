@@ -15,7 +15,7 @@ class Serializable:
         return {
             self.normalize_key(key): value
             for key, value in self.__dict__.items()  # noqa: WPS110
-            if not key.startswith(PRIVATE_TOKEN)
+            if self.__should_serialize_property(key, value)
         }
 
     def normalize_key(self, key: str) -> str:
@@ -29,3 +29,6 @@ class Serializable:
             str: the normalized key
         """
         return key.replace(NODE_KEY_TOKEN, str())
+
+    def __should_serialize_property(self, key: str, value) -> bool:
+        return not key.startswith(PRIVATE_TOKEN) and value is not None

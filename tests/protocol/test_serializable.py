@@ -25,6 +25,7 @@ class TestSerializable:
                 self.mock = 'value'
                 self.some_n = 123
                 self.__private = 'not-showing'
+                self.not_showing = None
 
         mock = Mock()
 
