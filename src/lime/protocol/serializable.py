@@ -1,9 +1,19 @@
+import json
+
 PRIVATE_TOKEN = '_'  # noqa: S105
 NODE_KEY_TOKEN = '_n'  # noqa: S105
 
 
 class Serializable:
     """Serializable objects to json."""
+
+    def __str__(self) -> str:
+        """Override str representation.
+
+        Returns:
+            str: json representation as str
+        """
+        return json.dumps(self.to_json())
 
     def to_json(self) -> dict:
         """

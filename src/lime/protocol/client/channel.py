@@ -1,14 +1,16 @@
-from typing import List
+from asyncio import Future, get_running_loop, wait_for
+from functools import partial
+from typing import Callable, Dict, List
+
 from ..command import Command
-from ..constants import SessionState, NotificationEvent
+from ..constants import NotificationEvent, SessionState
 from ..envelope import Envelope
 from ..message import Message
 from ..network import Transport
 from ..notification import Notification
 from ..session import Session
-from .channels import (CommandChannel, MessageChannel,
-                       NotificationChannel, SessionChannel)  # noqa: 319
-from .command_processor import CommandProcessor
+from .channels import CommandChannel, MessageChannel, NotificationChannel, SessionChannel  # noqa: 319
+from .command_processor import CommandProcessor  # noqa: I005
 
 
 class Channel(  # noqa: WPS215, WPS230
@@ -33,6 +35,7 @@ class Channel(  # noqa: WPS215, WPS230
         self.remote_node: str = None
         self.local_node: str = None
         self.session_id: str = None
+        self.command_resolves: Dict[str, Callable] = {}
 
     def send_message(self, message: Message) -> None:  # noqa: D102
         self.__send_only_established(message)
@@ -44,24 +47,65 @@ class Channel(  # noqa: WPS215, WPS230
         self.__send_only_established(notification)
 
     def send_session(self, session: Session) -> None:  # noqa: D102
-        self.__ensure_not_in_states(
-            [SessionState.FINISHED, SessionState.FAILED]
+        self.__ensure_state(
+            [SessionState.FINISHED, SessionState.FAILED],
+            False
         )
         self.__send(session)
 
     async def process_command_async(  # noqa: D102
         self,
         command: Command,
-        timeout: int
+        timeout: float
     ) -> Command:
-        pass
+        loop = get_running_loop()
+        future = loop.create_future()
+        self.command_resolves[command.id] = future.set_result
 
-    def __ensure_not_in_states(self, states: List[str]) -> None:
-        if self.state in states:
+        self.send_command(command)
+
+        future.add_done_callback(
+            partial(
+                Channel.raise_command_timeout,
+                command=command,
+                command_resolves=self.command_resolves
+            )
+        )
+        await wait_for(future, timeout)
+
+        return future
+
+    @staticmethod
+    def raise_command_timeout(
+        fut: Future,
+        command: Command,
+        command_resolves: Dict[str, Callable]
+    ) -> None:
+        """Raise a command timeout.
+
+        Args:
+            fut (Future): the originator future
+            command (Command): the timed out sent command
+            command_resolves (Dict[str, Callable]): the dictionary of futures resolves
+
+        Raises:
+            TimeoutError: Command could not be processed in the given timeout
+        """  # noqa: E501
+        if fut.cancelled():
+            command_resolve = command_resolves.get(command.id)
+            if command_resolve is not None:
+                del command_resolves[command.id]
+
+            raise TimeoutError(
+                f'The following command processing has timed out: {command}'
+            )
+
+    def __ensure_state(self, states: List[str], is_allowed: bool) -> None:
+        if self.state in states ^ is_allowed:
             raise ValueError(f'Cannot send in the {self.state} state')
 
     def __send_only_established(self, envelope: Envelope) -> None:
-        self.__ensure_not_in_states([SessionState.ESTABLISHED])
+        self.__ensure_state([SessionState.ESTABLISHED], True)
         self.__send(envelope)
 
     def __send(self, envelope: Envelope) -> None:

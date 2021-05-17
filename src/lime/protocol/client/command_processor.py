@@ -11,13 +11,13 @@ class CommandProcessor(CommandListener):
     async def process_command_async(
         self,
         command: Command,
-        timeout: int
+        timeout: float
     ) -> Command:
         """Process a Command asynchronously and return the result.
 
         Args:
             command (Command): The Command to be processed
-            timeout (int): Timeout to process the Command
+            timeout (float): Timeout to process the Command
 
         Returns:
             Command: The result Command
