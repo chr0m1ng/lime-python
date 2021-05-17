@@ -9,11 +9,11 @@ class Envelope(ABC, Serializable):
 
     def __init__(
         self,
-        id: str,
-        from_n: str,
-        to: str,
-        pp: str,
-        metadata: Dict[str, str]
+        id: str = None,
+        from_n: str = None,
+        to: str = None,
+        pp: str = None,
+        metadata: Dict[str, str] = None
     ):
         self.id = id
         self.from_n = from_n

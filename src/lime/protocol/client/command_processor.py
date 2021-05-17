@@ -8,8 +8,12 @@ class CommandProcessor(CommandListener):
     """Command Processor."""
 
     @abstractmethod
-    def process_command(self, command: Command, timeout: int) -> Command:
-        """Process a Command and return the result.
+    async def process_command_async(
+        self,
+        command: Command,
+        timeout: int
+    ) -> Command:
+        """Process a Command asynchronously and return the result.
 
         Args:
             command (Command): The Command to be processed

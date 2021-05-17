@@ -18,7 +18,7 @@ class Session(Envelope):  # noqa: WPS230
         authentication=None,
         reason: Reason = None
     ):
-
+        super().__init__()
         self.state = state
         self.encryption_options = encryption_options
         self.encryption = encryption

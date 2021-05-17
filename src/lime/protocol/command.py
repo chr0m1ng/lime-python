@@ -15,7 +15,7 @@ class Command(Envelope):  # noqa: WPS230
         reason: Reason = None,
         timeout: bool = None
     ):
-
+        super().__init__()
         self.method = method
         self.uri = uri
         self.type_n = type_n
