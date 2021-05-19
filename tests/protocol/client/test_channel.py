@@ -12,7 +12,7 @@ class TestChannel:
         # Arrange
         channel = ChannelTest(None, False, False)
         session = Session(SessionState.AUTHENTICATING)
-        channel.state = 'failed'
+        channel.state = SessionState.FAILED
 
         # Assert
         with pytest.raises(ValueError):
@@ -22,7 +22,7 @@ class TestChannel:
         # Arrange
         channel = ChannelTest(None, False, False)
         session = Session(SessionState.AUTHENTICATING)
-        channel.state = 'failed'
+        channel.state = SessionState.FAILED
 
         # Assert
         with pytest.raises(ValueError):
