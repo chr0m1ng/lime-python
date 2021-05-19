@@ -138,7 +138,7 @@ class Channel(
             self.on_command(envelope)
 
     def __ensure_state(self, states: List[str], is_allowed: bool) -> None:
-        if self.state in states ^ is_allowed:
+        if (self.state in states) ^ is_allowed:
             raise ValueError(f'Cannot send in the {self.state} state')
 
     def __send_only_established(self, envelope: Envelope) -> None:
