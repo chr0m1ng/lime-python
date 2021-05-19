@@ -36,4 +36,7 @@ jobs:
         flake8 . --count --show-source --statistics
     - name: Test with pytest
       run: |
-        pytest
+        pytest --cache-clear --cov=src tests/ > pytest-coverage.txt
+    - name: Pytest Coverage Commentator
+      uses: coroo/pytest-coverage-commentator@v1.0.2
+
