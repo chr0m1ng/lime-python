@@ -13,6 +13,7 @@ pep8 = "*"
 pytest = "*"
 pytest-cov = "*"
 isort = "*"
+pytest-asyncio = "*"
 
 [requires]
 python_version = "3.8"

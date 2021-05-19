@@ -1,6 +1,9 @@
-from src.lime.protocol.client import channel
-from src import Session, SessionState, Channel, Command, Message, Notification
+from src import (SessionCompression, SessionEncryption, Envelope,
+                 Session, SessionState, Channel, Command, Message,
+                 Notification, CommandMethod, Channel, Transport)
+from typing import List
 import pytest
+from asyncio import TimeoutError
 
 
 class TestChannel:
@@ -25,6 +28,21 @@ class TestChannel:
         with pytest.raises(ValueError):
             channel.send_command(session)
 
+    @pytest.mark.asyncio
+    async def test_process_comand_timeout_async(self):
+        # Arrange
+        transport = TransportTest(
+            SessionCompression.NONE, SessionEncryption.TLS)
+        channel = ChannelTest(transport, None, False)
+        channel.state = SessionState.ESTABLISHED
+        command = Command(
+            CommandMethod.GET,
+            '/context')
+
+        # Assert
+        with pytest.raises(TimeoutError):
+            (await channel.process_command_async(command, 1.0))
+
 
 class ChannelTest(Channel):
 
@@ -39,3 +57,30 @@ class ChannelTest(Channel):
 
     def on_session(self, session: Session) -> None:
         return super().on_session(session)
+
+
+class TransportTest(Transport):
+
+    def send(self, envelope: Envelope):
+        return super().send(envelope)
+
+    def get_supported_compression(self) -> List[str]:
+        return super().get_supported_compression()
+
+    def get_supported_encryption(self) -> List[str]:
+        return super().get_supported_encryption()
+
+    def on_envelope(self, envelope: Envelope) -> None:
+        return super().on_envelope(envelope)
+
+    def open(self, uri: str):
+        return super().open(uri)
+
+    def set_compression(self, compression: str):
+        return super().set_compression(compression)
+
+    def set_encryption(self, encryption: str):
+        return super().set_encryption(encryption)
+
+    def close(self):
+        return super().close()
