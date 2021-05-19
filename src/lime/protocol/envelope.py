@@ -1,10 +1,9 @@
-from abc import ABC
 from typing import Dict
 
 from .serializable import Serializable
 
 
-class Envelope(ABC, Serializable):
+class Envelope(Serializable):
     """Envelope representation."""
 
     def __init__(
@@ -31,8 +30,7 @@ class Envelope(ABC, Serializable):
         Returns:
             bool: True if the given Envelope is a Message
         """
-        return isinstance(envelope, Serializable) \
-            and 'content' in envelope.to_json()
+        return hasattr(envelope, 'content')
 
     @staticmethod
     def is_notification(envelope) -> bool:
@@ -44,8 +42,7 @@ class Envelope(ABC, Serializable):
         Returns:
             bool: True if the given Envelope is a Notification
         """
-        return isinstance(envelope, Serializable) \
-            and 'event' in envelope.to_json()
+        return hasattr(envelope, 'event')
 
     @staticmethod
     def is_command(envelope) -> bool:
@@ -57,8 +54,7 @@ class Envelope(ABC, Serializable):
         Returns:
             bool: True if the given Envelope is a Command
         """
-        return isinstance(envelope, Serializable) \
-            and 'method' in envelope.to_json()
+        return hasattr(envelope, 'method')
 
     @staticmethod
     def is_session(envelope) -> bool:
@@ -70,5 +66,4 @@ class Envelope(ABC, Serializable):
         Returns:
             bool: True if the given Envelope is a Session
         """
-        return isinstance(envelope, Serializable) \
-            and 'state' in envelope.to_json()
+        return hasattr(envelope, 'state')

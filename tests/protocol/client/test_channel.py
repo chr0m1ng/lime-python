@@ -1,9 +1,12 @@
+from src.lime.protocol.constants.command_status import CommandStatus
 from src import (SessionCompression, SessionEncryption, Envelope,
                  Session, SessionState, Channel, Command, Message,
-                 Notification, CommandMethod, Channel, Transport)
-from typing import List
+                 Notification, CommandMethod, Channel, Transport,
+                 UriTemplates, ContentTypes)
+from typing import List, Callable
 import pytest
-from asyncio import TimeoutError
+from asyncio import TimeoutError, wait, sleep, create_task
+from functools import partial
 
 
 class TestChannel:
@@ -29,19 +32,66 @@ class TestChannel:
             channel.send_command(session)
 
     @pytest.mark.asyncio
-    async def test_process_comand_timeout_async(self):
+    async def test_process_command_timeout_async(self):
         # Arrange
         transport = TransportTest(
-            SessionCompression.NONE, SessionEncryption.TLS)
+            SessionCompression.NONE,
+            SessionEncryption.TLS
+        )
         channel = ChannelTest(transport, None, False)
         channel.state = SessionState.ESTABLISHED
-        command = Command(
-            CommandMethod.GET,
-            '/context')
+        command = Command(CommandMethod.GET, '/context')
 
         # Assert
         with pytest.raises(TimeoutError):
-            (await channel.process_command_async(command, 1.0))
+            await channel.process_command_async(command, 1.0)
+
+    @pytest.mark.asyncio
+    async def test_process_command_async(self):
+        # Arrange
+        transport = TransportTest(
+            SessionCompression.NONE,
+            SessionEncryption.TLS
+        )
+
+        channel = ChannelTest(transport, None, False)
+        channel.state = SessionState.ESTABLISHED
+
+        command = Command(CommandMethod.GET, UriTemplates.PING)
+        command.id = '1234'
+        command_response = {
+            'id': '1234',
+            'method': CommandMethod.GET,
+            'type': ContentTypes.PING,
+            'resource': {},
+            'status': CommandStatus.SUCCESS
+        }
+
+        process_command = create_task(
+            channel.process_command_async(command, 10.0),
+            name='process_command'
+        )
+
+        on_envelope = create_task(self.act_with_delay_async(
+            partial(channel.on_envelope, envelope=command_response),
+            2
+        ))
+
+        # Act
+        done, pending = await wait({process_command, on_envelope})
+        result: Command = {
+            f.result()
+            for f in done
+            if f.get_name() == 'process_command'
+        }.pop()
+
+        # Assert
+        assert len(pending) == 0
+        assert result.to_json() == command_response
+
+    async def act_with_delay_async(self, act: Callable, delay: int):
+        await sleep(delay)
+        act()
 
 
 class ChannelTest(Channel):

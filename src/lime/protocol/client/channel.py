@@ -76,7 +76,7 @@ class Channel(
         )
         await wait_for(future, timeout)
 
-        return future
+        return future.result()
 
     @staticmethod
     def raise_command_timeout(

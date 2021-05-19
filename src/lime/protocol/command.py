@@ -1,5 +1,6 @@
 from .envelope import Envelope
 from .reason import Reason
+from typing import Any
 
 
 class Command(Envelope):
@@ -10,7 +11,7 @@ class Command(Envelope):
         method: str,
         uri: str = None,
         type_n: str = None,
-        resource: str = None,
+        resource: Any = None,
         status: str = None,
         reason: Reason = None,
         timeout: bool = None
