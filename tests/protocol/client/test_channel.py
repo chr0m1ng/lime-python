@@ -57,8 +57,7 @@ class TestChannel:
         }
 
         process_command = create_task(
-            channel.process_command_async(command, 10.0),  # noqa: WPS432
-            name='process_command'
+            channel.process_command_async(command, 10.0)  # noqa: WPS432
         )
 
         on_envelope = create_task(self.act_with_delay_async(
@@ -71,7 +70,7 @@ class TestChannel:
         result: Command = {
             task.result()
             for task in done
-            if task.get_name() == 'process_command'
+            if task.result()
         }.pop()
 
         # Assert
