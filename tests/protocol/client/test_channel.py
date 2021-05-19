@@ -57,12 +57,12 @@ class TestChannel:
         }
 
         process_command = create_task(
-            channel.process_command_async(command, 10.0)  # noqa: WPS432
+            channel.process_command_async(command, 3.0)  # noqa: WPS432
         )
 
         on_envelope = create_task(self.act_with_delay_async(
             partial(channel.on_envelope, envelope=command_response),
-            2
+            1
         ))
 
         # Act
