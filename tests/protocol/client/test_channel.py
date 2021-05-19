@@ -1,11 +1,8 @@
-from src.lime.protocol import notification
-from src.lime.protocol.constants.notification_event import NotificationEvent
-from src.lime.protocol.client import channel
-from src.lime.protocol.constants.command_status import CommandStatus
 from src import (SessionCompression, SessionEncryption, Envelope,
                  Session, SessionState, Channel, Command, Message,
                  Notification, CommandMethod, Channel, Transport,
-                 UriTemplates, ContentTypes)
+                 UriTemplates, ContentTypes, CommandStatus,
+                 NotificationEvent)
 from typing import List, Callable
 import pytest
 from asyncio import TimeoutError, wait, sleep, create_task
