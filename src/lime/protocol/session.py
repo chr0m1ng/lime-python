@@ -17,7 +17,7 @@ class Session(Envelope):
         scheme: str = None,
         authentication=None,
         reason: Reason = None
-    ):
+    ) -> None:
         super().__init__()
         self.state = state
         self.encryption_options = encryption_options

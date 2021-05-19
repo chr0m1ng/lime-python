@@ -4,7 +4,7 @@ from .constants import CommonConstants
 class Identity:
     """Represents an identity in a domain."""
 
-    def __init__(self, name: str = None, domain: str = None):
+    def __init__(self, name: str = None, domain: str = None) -> None:
         self.name = name
         self.domain = domain
 

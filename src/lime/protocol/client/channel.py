@@ -30,7 +30,7 @@ class Channel(
         transport: Transport,
         auto_reply_pings: bool,
         auto_notify_receipt: bool
-    ):
+    ) -> None:
         self.transport = transport
         self.auto_reply_pings = auto_reply_pings
         self.auto_notify_receipt = auto_notify_receipt
@@ -166,7 +166,7 @@ class Channel(
             envelope.to == self.local_node or \
             self.local_node.startswith(envelope.to)
 
-    def __should_reply_command(self, command: Command):
+    def __should_reply_command(self, command: Command) -> bool:
         return self.auto_reply_pings and \
             command.id and \
             command.uri == UriTemplates.PING and \

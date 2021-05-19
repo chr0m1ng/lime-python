@@ -15,7 +15,7 @@ class Command(Envelope):
         status: str = None,
         reason: Reason = None,
         timeout: bool = None
-    ):
+    ) -> None:
         super().__init__()
         self.method = method
         self.uri = uri
