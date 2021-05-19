@@ -1,3 +1,6 @@
+from src.lime.protocol import notification
+from src.lime.protocol.constants.notification_event import NotificationEvent
+from src.lime.protocol.client import channel
 from src.lime.protocol.constants.command_status import CommandStatus
 from src import (SessionCompression, SessionEncryption, Envelope,
                  Session, SessionState, Channel, Command, Message,
@@ -7,15 +10,16 @@ from typing import List, Callable
 import pytest
 from asyncio import TimeoutError, wait, sleep, create_task
 from functools import partial
+from pytest import MonkeyPatch
+from pytest_mock import mocker, MockerFixture
 
 
 class TestChannel:
 
     def test_ensure_allowed_states(self):
         # Arrange
-        channel = ChannelTest(None, False, False)
+        channel = self.__get_target(SessionState.FAILED)
         session = Session(SessionState.AUTHENTICATING)
-        channel.state = SessionState.FAILED
 
         # Assert
         with pytest.raises(ValueError):
@@ -23,9 +27,8 @@ class TestChannel:
 
     def test_ensure_not_allowed_states(self):
         # Arrange
-        channel = ChannelTest(None, False, False)
+        channel = self.__get_target(SessionState.FAILED)
         session = Session(SessionState.AUTHENTICATING)
-        channel.state = SessionState.FAILED
 
         # Assert
         with pytest.raises(ValueError):
@@ -34,13 +37,8 @@ class TestChannel:
     @pytest.mark.asyncio
     async def test_process_command_timeout_async(self):
         # Arrange
-        transport = TransportTest(
-            SessionCompression.NONE,
-            SessionEncryption.TLS
-        )
-        channel = ChannelTest(transport, None, False)
-        channel.state = SessionState.ESTABLISHED
-        command = Command(CommandMethod.GET, '/context')
+        channel = self.__get_target()
+        command = Command(CommandMethod.GET, UriTemplates.PING)
 
         # Assert
         with pytest.raises(TimeoutError):
@@ -49,13 +47,7 @@ class TestChannel:
     @pytest.mark.asyncio
     async def test_process_command_async(self):
         # Arrange
-        transport = TransportTest(
-            SessionCompression.NONE,
-            SessionEncryption.TLS
-        )
-
-        channel = ChannelTest(transport, None, False)
-        channel.state = SessionState.ESTABLISHED
+        channel = self.__get_target()
 
         command = Command(CommandMethod.GET, UriTemplates.PING)
         command.id = '1234'
@@ -92,6 +84,64 @@ class TestChannel:
     async def act_with_delay_async(self, act: Callable, delay: int):
         await sleep(delay)
         act()
+
+    def test_on_envelope_message(self, mocker: MockerFixture):
+        # Arrange
+        channel = self.__get_target()
+        message = Message(ContentTypes.PING, {})
+        spy = mocker.spy(channel, 'on_message')
+
+        # Act
+        channel.on_envelope(message.to_json())
+
+        # Assert
+        spy.assert_called_once_with(message)
+
+    def test_on_envelope_notification(self, mocker: MockerFixture):
+        # Arrange
+        channel = self.__get_target()
+        notification = Notification(NotificationEvent.CONSUMED)
+        spy = mocker.spy(channel, 'on_notification')
+
+        # Act
+        channel.on_envelope(notification.to_json())
+
+        # Assert
+        spy.assert_called_once_with(notification)
+
+    def test_on_envelope_session(self, mocker: MockerFixture):
+        # Arrange
+        channel = self.__get_target()
+        session = Session(SessionState.FINISHED)
+        spy = mocker.spy(channel, 'on_session')
+
+        # Act
+        channel.on_envelope(session.to_json())
+
+        # Assert
+        spy.assert_called_once_with(session)
+
+    def test_on_envelope_command(self, mocker: MockerFixture):
+        # Arrange
+        channel = self.__get_target()
+        command = Command(CommandMethod.GET)
+        spy = mocker.spy(channel, 'on_command')
+
+        # Act
+        channel.on_envelope(command.to_json())
+
+        # Assert
+        spy.assert_called_once_with(command)
+
+    def __get_target(self, state: str = SessionState.ESTABLISHED):
+        transport = TransportTest(
+            SessionCompression.NONE,
+            SessionEncryption.TLS
+        )
+
+        channel = ChannelTest(transport, None, False)
+        channel.state = state
+        return channel
 
 
 class ChannelTest(Channel):

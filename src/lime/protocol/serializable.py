@@ -1,5 +1,7 @@
 import json
 
+from attr import has
+
 PRIVATE_TOKEN = '_'  # noqa: S105
 NODE_KEY_TOKEN = '_n'  # noqa: S105
 
@@ -42,3 +44,10 @@ class Serializable:
 
     def __should_serialize_property(self, key: str, value) -> bool:
         return not key.startswith(PRIVATE_TOKEN) and value is not None
+
+    def __eq__(self, o: object) -> bool:
+        return isinstance(o, Serializable) and \
+            self.to_json() == o.to_json()
+
+    def __hash__(self) -> int:
+        return hash(str(self))

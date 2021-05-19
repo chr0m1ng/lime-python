@@ -126,7 +126,7 @@ class Channel(
 
         elif Envelope.is_command(envelope):
             envelope.__class__ = Command
-            if envelope.status:
+            if hasattr(envelope, 'status') and envelope.status:
                 set_result = self.command_resolves.get(envelope.id)
 
                 if set_result:
