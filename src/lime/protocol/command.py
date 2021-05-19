@@ -1,6 +1,6 @@
+from typing import Any
 from .envelope import Envelope
 from .reason import Reason
-from typing import Any
 
 
 class Command(Envelope):

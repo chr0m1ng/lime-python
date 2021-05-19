@@ -1,4 +1,3 @@
-from abc import ABC
 from .envelope import Envelope
 from .reason import Reason
 

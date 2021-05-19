@@ -18,3 +18,7 @@ pytest-mock = "*"
 
 [requires]
 python_version = "3.8"
+
+[scripts]
+test-cov = "pytest -vvv --cache-clear --cov=src tests/"
+test-lint = "flake8 . --count --show-source --statistics"

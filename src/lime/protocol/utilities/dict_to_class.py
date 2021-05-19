@@ -1,7 +1,6 @@
 from ..serializable import Serializable
 
-
-NORMALIZED_KEYS = ['from', 'type']
+NORMALIZED_KEYS = frozenset(('from', 'type'))
 
 
 class DictToClass(Serializable):

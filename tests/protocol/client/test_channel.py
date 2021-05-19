@@ -1,14 +1,14 @@
-from src import (SessionCompression, SessionEncryption, Envelope,
-                 Session, SessionState, Channel, Command, Message,
-                 Notification, CommandMethod, Channel, Transport,
-                 UriTemplates, ContentTypes, CommandStatus,
-                 NotificationEvent)
-from typing import List, Callable
-import pytest
-from asyncio import TimeoutError, wait, sleep, create_task
+from asyncio import TimeoutError, create_task, sleep, wait
 from functools import partial
-from pytest import MonkeyPatch
-from pytest_mock import mocker, MockerFixture
+from typing import Callable, List
+
+import pytest
+from pytest_mock import MockerFixture
+
+from src import (Channel, Command, CommandMethod, CommandStatus, ContentTypes,
+                 Envelope, Message, Notification, NotificationEvent, Session,
+                 SessionCompression, SessionEncryption, SessionState,
+                 Transport, UriTemplates)
 
 
 class TestChannel:
@@ -57,7 +57,7 @@ class TestChannel:
         }
 
         process_command = create_task(
-            channel.process_command_async(command, 10.0),
+            channel.process_command_async(command, 10.0),  # noqa: WPS432
             name='process_command'
         )
 
@@ -69,13 +69,13 @@ class TestChannel:
         # Act
         done, pending = await wait({process_command, on_envelope})
         result: Command = {
-            f.result()
-            for f in done
-            if f.get_name() == 'process_command'
+            task.result()
+            for task in done
+            if task.get_name() == 'process_command'
         }.pop()
 
         # Assert
-        assert len(pending) == 0
+        assert bool(pending) is False
         assert result.to_json() == command_response
 
     async def act_with_delay_async(self, act: Callable, delay: int):
