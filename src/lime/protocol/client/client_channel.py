@@ -1,76 +1,67 @@
-from asyncio import Future, get_running_loop, wait_for, loop
-from typing import Callable, Dict
+from asyncio import Future, get_running_loop
+
+from ..command import Command
+from ..constants import SessionState
 from ..message import Message
 from ..notification import Notification
-from ..command import Command
+from ..security import Authentication
 from ..session import Session
 from .channel import Channel
-from ..network import Transport
-from ..security import Authentication
-from ..constants import SessionCompression, SessionEncryption, SessionState
 
 
 class ClientChannel(Channel):
-    """Client channel representation"""
+    """Client channel representation."""
 
-    def __init__(
+    async def establish_session_async(
         self,
-        transport: Transport,
-        auto_reply_pings: bool = True,
-        auto_notify_receipt: bool = False
-    ) -> None:
-        super().__init__()
-        self.transport = transport
-        self.auto_reply_pings = auto_reply_pings
-        self.auto_notify_receipt = auto_notify_receipt
-
-    def establish_session(
-        self,
-        compression: SessionCompression,
-        encryption: SessionEncryption,
+        compression: str,
+        encryption: str,
         identity: str,
-        authenticaion: Authentication,
+        authentication: Authentication,
         instance: str
-    ):
+    ) -> Session:
+        """Esablish a new session.
 
-        if(self.state != SessionState.NEW):
-            raise ValueError(
-                f'cannot establish a session in the {self.state} state'
-            )
+        Args:
+            compression (str): compression type
+            encryption (str): encryption type
+            identity (str): identity str
+            authentication (Authentication): Authentication specs
+            instance (str): instance name
 
-    def start_new_session(self) -> Future:
-        if (self.state != SessionState.NEW):
-            raise ValueError(
-                f'Cannot start a session in the {self.state} state'
-            )
-        loop = get_running_loop()
-        future = loop.create_future()
+        Returns:
+            Session: A established Session
+        """
+        self.__ensure_state([SessionState.NEW], True)
 
-        self.__on_session_finished = future.set_result
-        self.__on_session_failed = future.set_exception
+        session: Session = (await self.start_new_session_async()).result()
+        if session.encryption_options or session.compression_options:
+            compression = compression if compression else session.compression_options[0]  # noqa: E501
+            encryption = encryption if encryption else session.encryption_options[0]  # noqa: E501
+            session: Session = (await self.negotiate_session_async(compression, encryption)).result()  # noqa: E501
+        else:
+            if session.compression != self.transport.compression:
+                self.transport.set_compression(session.compression)
+            if session.encryption != self.transport.encryption:
+                self.transport.set_encryption(session.encryption)
 
-        session = Session(SessionState.NEW)
-        self.send_session(session)
+        session: Session = (await self.authenticate_session_async(identity, authentication, instance)).result()  # noqa: E501
+        self.__reset_session_listeners()
+        return session
 
-        return future
-
-    def start_new_session(self) -> Future:
+    def start_new_session_async(self) -> Future:
         """Start new session.
-
-        Raises:
-            ValueError: Value error in case state is not 'new'
 
         Returns:
             Future: session future
         """
-        if (self.state != SessionState.NEW):
-            raise ValueError(
-                f'Cannot start a session in the {self.state} state'
-            )
+        self.__ensure_state([SessionState.NEW], True)
+
         loop = get_running_loop()
         future = loop.create_future()
 
-        self.__on_session_finished = future.set_result
+        self.__on_session_negotiating = future.set_result
+        self.__on_session_authenticating = future.set_result
         self.__on_session_failed = future.set_exception
 
         session = Session(SessionState.NEW)
@@ -78,48 +69,181 @@ class ClientChannel(Channel):
 
         return future
 
-    def negotiate_session(
+    def negotiate_session_async(
         self,
         session_compression: str,
         session_encryption: str
     ) -> Future:
-        """Negotiate session
+        """Handle session in negotiating state.
 
         Args:
             session_compression (str): session compression type
             session_encryption (str): session encryption type
 
-        Raises:
-            ValueError: raise Value error in case state is not 'Negotiating'
-
         Returns:
             Future: negotiate session future
         """
-        if (self.state != SessionState.NEGOTIATING):
-            raise ValueError(
-                f'Cannot start a session in the {self.state} state'
-            )
+        self.__ensure_state([SessionState.NEGOTIATING], True)
+
         loop = get_running_loop()
         future = loop.create_future()
 
         self.__on_session_authenticating = future.set_result
         self.__on_session_failed = future.set_exception
 
-        session = Session(SessionState.NEGOTIATING,
-                          session_encryption,
-                          session_compression
-                          )
+        session = Session(
+            SessionState.NEGOTIATING,
+            session_encryption,
+            session_compression
+        )
 
         session.id = self.session_id
         self.send_session(session)
 
         return future
 
-    def __on_session_failed(self, session: Session):
+    def authenticate_session_async(
+        self,
+        identity: str,
+        authentication: Authentication,
+        instance: str
+    ) -> Future:
+        """Authenticate session.
+
+        Args:
+            identity (str): requester identity
+            authentication (Authentication): [description]
+            instance (str): [description]
+
+        Returns:
+            Future: [description]
+        """
+        self.__ensure_state([SessionState.AUTHENTICATING], True)
+
+        loop = get_running_loop()
+        future = loop.create_future()
+
+        self.__on_session_established = future.set_result
+        self.__on_session_failed = future.set_exception
+
+        session = Session(
+            SessionState.AUTHENTICATING,
+            scheme=authentication.scheme if authentication.scheme else 'unknown',  # noqa: E501
+            authentication=authentication
+        )
+        session.from_n = f'{identity}/{instance}'
+        session.id = self.session_id
+        self.send_session(session)
+
+        return future
+
+    def send_finishing_session_async(self) -> Future:
+        """Handle session in state finishing.
+
+        Returns:
+            Future: session future
+        """
+        self.__ensure_state([SessionState.ESTABLISHED], True)
+
+        loop = get_running_loop()
+        future = loop.create_future()
+
+        self.__on_session_finished = future.set_result
+        self.__on_session_failed = future.set_exception
+
+        session = Session(SessionState.FINISHING)
+        session.id = self.session_id
+
+        self.send_session(session)
+
+        return future
+
+    def on_session_finished(self, session: Session):
+        """Handle callback on session finished.
+
+        Args:
+            session (Session): Received session
+        """
         pass
 
-    def __on_session_finished(self, session: Session):
+    def on_session_failed(self, session: Session):
+        """Handle callback on session failed.
+
+        Args:
+            session (Session): Received Session
+        """
         pass
 
-    def __on_session_authenticating(self, session: Session):
+    def on_session(self, session: Session) -> None:  # noqa: WPS213
+        """Handle session envelope received.
+
+        Args:
+            session (Session): Received Session
+        """
+        self.session_id = session.id
+        self.state = session.state
+
+        if session.state == SessionState.ESTABLISHED:
+            self.local_node = str(session.to)
+            self.remote_node = session.from_n
+
+        if session.state == SessionState.NEGOTIATING:
+            self.__on_session_negotiating(session)
+            return
+
+        if session.state == SessionState.AUTHENTICATING:
+            self.__on_session_authenticating(session)
+            return
+
+        if session.state == SessionState.ESTABLISHED:
+            self.__on_session_established(session)
+            return
+
+        if session.state == SessionState.FINISHED:
+            self.transport.close()
+            self.on_session_finished(session)
+            self.__on_session_finished(session)
+            return
+
+        if session.state == SessionState.FAILED:
+            self.transport.close()
+            self.on_session_failed(session)
+            self.__on_session_failed(session)
+            return
+
+    def on_message(self, message: Message) -> None:  # noqa: D102
+        pass
+
+    def on_command(self, command: Command) -> None:  # noqa: D102
+        pass
+
+    def on_notification(  # noqa: D102
+        self,
+        notification: Notification
+    ) -> None:
+        pass
+
+    def __reset_session_listeners(self) -> None:
+        self.__on_session_finished = \
+            self.__on_session_negotiating = \
+            self.__on_session_established = \
+            self.__on_session_authenticating = \
+            self.__on_session_failed = self.__empty_method  # noqa: WPS429
+
+    def __on_session_failed(self, session: Session) -> None:
+        pass
+
+    def __on_session_finished(self, session: Session) -> None:
+        pass
+
+    def __on_session_authenticating(self, session: Session) -> None:
+        pass
+
+    def __on_session_negotiating(self, session: Session) -> None:
+        pass
+
+    def __on_session_established(self, session: Session) -> None:
+        pass
+
+    def __empty_method(self) -> None:
         pass
