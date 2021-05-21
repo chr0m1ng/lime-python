@@ -39,6 +39,7 @@ class Channel(
         self.local_node: str = None
         self.session_id: str = None
         self.command_resolves: Dict[str, Callable] = {}
+        self.transport.on_envelope = self.on_envelope
 
     def send_message(self, message: Message) -> None:  # noqa: D102
         self.__send_only_established(message)
