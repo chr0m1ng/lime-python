@@ -4,7 +4,7 @@ from .constants import CommonConstants
 class Node:
     """Node represents a identity with an instance."""
 
-    def __init__(self, identity=None, instance: str = None):
+    def __init__(self, identity=None, instance: str = None) -> None:
         self.identity = identity
         self.instance = instance
 
@@ -40,14 +40,14 @@ class Node:
         return f'{self.identity}/{self.instance}'
 
     @staticmethod
-    def parse_str(possible_node: str) -> str:
+    def parse_str(possible_node: str):
         """Parse a string into a node.
 
         Args:
             possible_node (str): string node
 
         Returns:
-            str: Node object
+            Node: Node object
         """
         from .identity import Identity  # noqa: WPS433
 
@@ -69,7 +69,7 @@ class Node:
             possible_node (str | Identity| Node): possible Node object
 
         Returns:
-            [Node]: Returns a node object
+            Node: Returns a node object
         """
         from .identity import Identity  # noqa: WPS433
 

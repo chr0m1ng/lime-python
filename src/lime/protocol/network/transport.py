@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from typing import List
+
 from ..envelope import Envelope
 from ..listeners import EnvelopeListener
 
@@ -7,12 +8,12 @@ from ..listeners import EnvelopeListener
 class Transport(EnvelopeListener):
     """Transport interface."""
 
-    def __init__(self, compression: str, encryption: str):
+    def __init__(self, compression: str, encryption: str) -> None:
         self.compression = compression
         self.encryption = encryption
 
     @abstractmethod
-    def open(self, uri: str):
+    def open(self, uri: str) -> None:
         """Open a new connection.
 
         Args:
@@ -21,12 +22,12 @@ class Transport(EnvelopeListener):
         pass
 
     @abstractmethod
-    def close(self):
+    def close(self) -> None:
         """Close a open connection."""
         pass
 
     @abstractmethod
-    def send(self, envelope: Envelope):
+    def send(self, envelope: Envelope) -> None:
         """Send a Envelope to the server.
 
         Args:
@@ -44,7 +45,7 @@ class Transport(EnvelopeListener):
         pass
 
     @abstractmethod
-    def set_compression(self, compression: str):
+    def set_compression(self, compression: str) -> None:
         """Set a compression to use with the server.
 
         Args:
@@ -62,7 +63,7 @@ class Transport(EnvelopeListener):
         pass
 
     @abstractmethod
-    def set_encryption(self, encryption: str):
+    def set_encryption(self, encryption: str) -> None:
         """Set a encryption to use with the server.
 
         Args:

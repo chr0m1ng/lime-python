@@ -1,9 +1,10 @@
 from typing import List
+
 from .envelope import Envelope
 from .reason import Reason
 
 
-class Session(Envelope):  # noqa: WPS230
+class Session(Envelope):
     """Session representation."""
 
     def __init__(
@@ -16,8 +17,8 @@ class Session(Envelope):  # noqa: WPS230
         scheme: str = None,
         authentication=None,
         reason: Reason = None
-    ):
-
+    ) -> None:
+        super().__init__()
         self.state = state
         self.encryption_options = encryption_options
         self.encryption = encryption

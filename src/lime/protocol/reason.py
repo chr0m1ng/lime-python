@@ -1,11 +1,11 @@
 class Reason:
     """A reason for events occurred during the client-server interactions."""
 
-    def __init__(self, code: int, description: str):
+    def __init__(self, code: int, description: str) -> None:
         self.code = code
         self.description = description
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Override str representation.
 
         Returns:
