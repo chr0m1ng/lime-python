@@ -15,6 +15,28 @@ class TestSerializable:
         # Assert
         assert result == expected_result
 
+    def test_serialize_value_native(self):
+        # Arrange
+        value = 123
+        target = self.get_target()
+
+        # Act
+        result = target.serialize_value(value)
+
+        # Assert
+        assert result == value
+
+    def test_serialize_value_serializable(self):
+        # Arrange
+        value = DummySerializable()
+        target = self.get_target()
+
+        # Act
+        result = target.serialize_value(value)
+
+        # Assert
+        assert result == value.to_json()
+
     def test_to_json(self):
         # Arrange
 
@@ -42,3 +64,9 @@ class TestSerializable:
 
     def get_target(self):
         return Serializable()
+
+
+class DummySerializable(Serializable):
+
+    def __init__(self) -> None:
+        self.dummy = 'dummy'

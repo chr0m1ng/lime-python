@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 PRIVATE_TOKEN = '_'  # noqa: S105
 NODE_KEY_TOKEN = '_n'  # noqa: S105
@@ -43,7 +44,7 @@ class Serializable:
             dict: the class json representation without private properties
         """
         return {
-            self.normalize_key(key): value
+            self.normalize_key(key): self.serialize_value(value)
             for key, value in self.__dict__.items()  # noqa: WPS110
             if self.__should_serialize_property(key, value)
         }
@@ -59,6 +60,17 @@ class Serializable:
             str: the normalized key
         """
         return key.replace(NODE_KEY_TOKEN, str())
+
+    def serialize_value(self, value: Any) -> Any:
+        """Serialize a value if it's Serializable.
+
+        Args:
+            value (Any): property value
+
+        Returns:
+            Any: the serialized property
+        """
+        return value.to_json() if isinstance(value, Serializable) else value
 
     def __should_serialize_property(self, key: str, value) -> bool:
         return not key.startswith(PRIVATE_TOKEN) and value is not None
