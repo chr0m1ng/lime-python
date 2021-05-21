@@ -50,7 +50,7 @@ class Channel(
         self.__send_only_established(notification)
 
     def send_session(self, session: Session) -> None:  # noqa: D102
-        self.__ensure_state(
+        self.ensure_state(
             [SessionState.FINISHED, SessionState.FAILED],
             False
         )
@@ -137,12 +137,22 @@ class Channel(
                 self.send_command(self.__create_ping_command_reply(envelope))
             self.on_command(envelope)
 
-    def __ensure_state(self, states: List[str], is_allowed: bool) -> None:
+    def ensure_state(self, states: List[str], is_allowed: bool) -> None:
+        """Check if class state is at specified states if it's allowed.
+
+        Args:
+            states (List[str]): List of states
+            is_allowed (bool): if true check if state is at specified states\
+            else if isn't
+
+        Raises:
+            ValueError: Raise if state doesn't match the is_allowed config
+        """
         if (self.state in states) ^ is_allowed:
             raise ValueError(f'Cannot send in the {self.state} state')
 
     def __send_only_established(self, envelope: Envelope) -> None:
-        self.__ensure_state([SessionState.ESTABLISHED], True)
+        self.ensure_state([SessionState.ESTABLISHED], True)
         self.__send(envelope)
 
     def __send(self, envelope: Envelope) -> None:

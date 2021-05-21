@@ -32,20 +32,20 @@ class ClientChannel(Channel):
         Returns:
             Session: A established Session
         """
-        self.__ensure_state([SessionState.NEW], True)
+        self.ensure_state([SessionState.NEW], True)
 
-        session: Session = (await self.start_new_session_async()).result()
+        session: Session = await self.start_new_session_async()
         if session.encryption_options or session.compression_options:
             compression = compression if compression else session.compression_options[0]  # noqa: E501
             encryption = encryption if encryption else session.encryption_options[0]  # noqa: E501
-            session: Session = (await self.negotiate_session_async(compression, encryption)).result()  # noqa: E501
+            session: Session = await self.negotiate_session_async(compression, encryption)  # noqa: E501
         else:
             if session.compression != self.transport.compression:
                 self.transport.set_compression(session.compression)
             if session.encryption != self.transport.encryption:
                 self.transport.set_encryption(session.encryption)
 
-        session: Session = (await self.authenticate_session_async(identity, authentication, instance)).result()  # noqa: E501
+        session: Session = await self.authenticate_session_async(identity, authentication, instance)  # noqa: E501
         self.__reset_session_listeners()
         return session
 
@@ -53,15 +53,15 @@ class ClientChannel(Channel):
         """Start new session.
 
         Returns:
-            Future: session future
+            Future: A new Session
         """
-        self.__ensure_state([SessionState.NEW], True)
+        self.ensure_state([SessionState.NEW], True)
 
         loop = get_running_loop()
         future = loop.create_future()
 
-        self.__on_session_negotiating = future.set_result
-        self.__on_session_authenticating = future.set_result
+        self.on_session_negotiating = future.set_result
+        self.on_session_authenticating = future.set_result
         self.__on_session_failed = future.set_exception
 
         session = Session(SessionState.NEW)
@@ -81,20 +81,20 @@ class ClientChannel(Channel):
             session_encryption (str): session encryption type
 
         Returns:
-            Future: negotiate session future
+            Future: A negotiated Session
         """
-        self.__ensure_state([SessionState.NEGOTIATING], True)
+        self.ensure_state([SessionState.NEGOTIATING], True)
 
         loop = get_running_loop()
         future = loop.create_future()
 
-        self.__on_session_authenticating = future.set_result
+        self.on_session_authenticating = future.set_result
         self.__on_session_failed = future.set_exception
 
         session = Session(
             SessionState.NEGOTIATING,
-            session_encryption,
-            session_compression
+            encryption=session_encryption,
+            compression=session_compression
         )
 
         session.id = self.session_id
@@ -111,19 +111,19 @@ class ClientChannel(Channel):
         """Authenticate session.
 
         Args:
-            identity (str): requester identity
-            authentication (Authentication): [description]
-            instance (str): [description]
+            identity (str): Identity to authenticate
+            authentication (Authentication): Authentication object
+            instance (str): Instance to authenticate
 
         Returns:
-            Future: [description]
+            Future: An authenticated Session
         """
-        self.__ensure_state([SessionState.AUTHENTICATING], True)
+        self.ensure_state([SessionState.AUTHENTICATING], True)
 
         loop = get_running_loop()
         future = loop.create_future()
 
-        self.__on_session_established = future.set_result
+        self.on_session_established = future.set_result
         self.__on_session_failed = future.set_exception
 
         session = Session(
@@ -143,7 +143,7 @@ class ClientChannel(Channel):
         Returns:
             Future: session future
         """
-        self.__ensure_state([SessionState.ESTABLISHED], True)
+        self.ensure_state([SessionState.ESTABLISHED], True)
 
         loop = get_running_loop()
         future = loop.create_future()
@@ -187,16 +187,17 @@ class ClientChannel(Channel):
             self.local_node = str(session.to)
             self.remote_node = session.from_n
 
+        # Switch case
         if session.state == SessionState.NEGOTIATING:
-            self.__on_session_negotiating(session)
+            self.on_session_negotiating(session)
             return
 
         if session.state == SessionState.AUTHENTICATING:
-            self.__on_session_authenticating(session)
+            self.on_session_authenticating(session)
             return
 
         if session.state == SessionState.ESTABLISHED:
-            self.__on_session_established(session)
+            self.on_session_established(session)
             return
 
         if session.state == SessionState.FINISHED:
@@ -223,26 +224,41 @@ class ClientChannel(Channel):
     ) -> None:
         pass
 
+    def on_session_authenticating(self, session: Session) -> None:
+        """Handle session authenticating callback.
+
+        Args:
+            session (Session): received Session
+        """
+        pass
+
+    def on_session_negotiating(self, session: Session) -> None:
+        """Handle session negotiating callback.
+
+        Args:
+            session (Session): received Session
+        """
+        pass
+
+    def on_session_established(self, session: Session) -> None:
+        """Handle session established callback.
+
+        Args:
+            session (Session): received Session
+        """
+        pass
+
     def __reset_session_listeners(self) -> None:
         self.__on_session_finished = \
-            self.__on_session_negotiating = \
-            self.__on_session_established = \
-            self.__on_session_authenticating = \
+            self.on_session_negotiating = \
+            self.on_session_established = \
+            self.on_session_authenticating = \
             self.__on_session_failed = self.__empty_method  # noqa: WPS429
 
     def __on_session_failed(self, session: Session) -> None:
         pass
 
     def __on_session_finished(self, session: Session) -> None:
-        pass
-
-    def __on_session_authenticating(self, session: Session) -> None:
-        pass
-
-    def __on_session_negotiating(self, session: Session) -> None:
-        pass
-
-    def __on_session_established(self, session: Session) -> None:
         pass
 
     def __empty_method(self) -> None:
