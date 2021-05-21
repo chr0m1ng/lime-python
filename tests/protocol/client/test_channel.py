@@ -1,14 +1,15 @@
-from asyncio import TimeoutError, create_task, sleep, wait
+from asyncio import TimeoutError, sleep, wait
 from functools import partial
-from typing import Callable, List
+from typing import Callable
 
 import pytest
 from pytest_mock import MockerFixture
 
 from src import (Channel, Command, CommandMethod, CommandStatus, ContentTypes,
-                 Envelope, Message, Notification, NotificationEvent, Session,
+                 Message, Notification, NotificationEvent, Session,
                  SessionCompression, SessionEncryption, SessionState,
-                 Transport, UriTemplates)
+                 UriTemplates)
+from .transport_dummy import TransportDummy
 
 
 class TestChannel:
@@ -56,14 +57,12 @@ class TestChannel:
             'status': CommandStatus.SUCCESS
         }
 
-        process_command = create_task(
-            channel.process_command_async(command, 3.0)  # noqa: WPS432
-        )
+        process_command = channel.process_command_async(command, 3.0)  # noqa: WPS432, E501
 
-        on_envelope = create_task(self.act_with_delay_async(
+        on_envelope = self.act_with_delay_async(
             partial(channel.on_envelope, envelope=command_response),
             1
-        ))
+        )
 
         # Act
         done, pending = await wait({process_command, on_envelope})
@@ -130,7 +129,7 @@ class TestChannel:
         spy.assert_called_once_with(command)
 
     def __get_target(self, state: str = SessionState.ESTABLISHED):
-        transport = TransportTest(
+        transport = TransportDummy(
             SessionCompression.NONE,
             SessionEncryption.TLS
         )
@@ -143,40 +142,13 @@ class TestChannel:
 class ChannelTest(Channel):
 
     def on_command(self, command: Command) -> None:
-        return super().on_command(command)
+        pass
 
     def on_message(self, message: Message) -> None:
-        return super().on_message(message)
+        pass
 
     def on_notification(self, notification: Notification) -> None:
-        return super().on_notification(notification)
+        pass
 
     def on_session(self, session: Session) -> None:
-        return super().on_session(session)
-
-
-class TransportTest(Transport):
-
-    def send(self, envelope: Envelope):
-        return super().send(envelope)
-
-    def get_supported_compression(self) -> List[str]:
-        return super().get_supported_compression()
-
-    def get_supported_encryption(self) -> List[str]:
-        return super().get_supported_encryption()
-
-    def on_envelope(self, envelope: Envelope) -> None:
-        return super().on_envelope(envelope)
-
-    def open(self, uri: str):
-        return super().open(uri)
-
-    def set_compression(self, compression: str):
-        return super().set_compression(compression)
-
-    def set_encryption(self, encryption: str):
-        return super().set_encryption(encryption)
-
-    def close(self):
-        return super().close()
+        pass
