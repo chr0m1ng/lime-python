@@ -1,7 +1,6 @@
 from abc import abstractmethod
 from typing import List
 
-from ..envelope import Envelope
 from ..listeners import EnvelopeListener
 
 
@@ -27,11 +26,11 @@ class Transport(EnvelopeListener):
         pass
 
     @abstractmethod
-    def send(self, envelope: Envelope) -> None:
+    def send(self, envelope: dict) -> None:
         """Send a Envelope to the server.
 
         Args:
-            envelope (Envelope): the Envelope to be sent
+            envelope (dict): the serialized Envelope to be sent
         """
         pass
 
