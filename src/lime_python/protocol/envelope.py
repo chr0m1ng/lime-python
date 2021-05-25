@@ -30,7 +30,7 @@ class Envelope(Serializable):
         Returns:
             bool: True if the given Envelope is a Message
         """
-        return hasattr(envelope, 'content')
+        return hasattr(envelope, 'content') or 'content' in envelope
 
     @staticmethod
     def is_notification(envelope) -> bool:
@@ -42,7 +42,7 @@ class Envelope(Serializable):
         Returns:
             bool: True if the given Envelope is a Notification
         """
-        return hasattr(envelope, 'event')
+        return hasattr(envelope, 'event') or 'event' in envelope
 
     @staticmethod
     def is_command(envelope) -> bool:
@@ -54,7 +54,7 @@ class Envelope(Serializable):
         Returns:
             bool: True if the given Envelope is a Command
         """
-        return hasattr(envelope, 'method')
+        return hasattr(envelope, 'method') or 'method' in envelope
 
     @staticmethod
     def is_session(envelope) -> bool:
@@ -66,4 +66,4 @@ class Envelope(Serializable):
         Returns:
             bool: True if the given Envelope is a Session
         """
-        return hasattr(envelope, 'state')
+        return hasattr(envelope, 'state') or 'state' in envelope
