@@ -48,12 +48,14 @@ class TestSerializable:
                 self.some_n = 123
                 self.__private = 'not-showing'
                 self.not_showing = None
+                self.should_be_in_camel = 'yes'
 
         mock = Mock()
 
         expected_result = {
             'mock': 'value',
-            'some': 123
+            'some': 123,
+            'shouldBeInCamel': 'yes'
         }
 
         # Act

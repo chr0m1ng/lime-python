@@ -28,8 +28,8 @@ class Channel(
     def __init__(
         self,
         transport: Transport,
-        auto_reply_pings: bool,
-        auto_notify_receipt: bool
+        auto_reply_pings: bool = True,
+        auto_notify_receipt: bool = True
     ) -> None:
         self.transport = transport
         self.auto_reply_pings = auto_reply_pings

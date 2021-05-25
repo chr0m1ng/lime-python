@@ -15,6 +15,7 @@ pytest-cov = "*"
 isort = "*"
 pytest-asyncio = "*"
 pytest-mock = "*"
+pyhumps = "*"
 
 [requires]
 python_version = "3.8"

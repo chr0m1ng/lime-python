@@ -1,6 +1,8 @@
 import json
 from typing import Any
 
+from humps import camelize
+
 PRIVATE_TOKEN = '_'  # noqa: S105
 NODE_KEY_TOKEN = '_n'  # noqa: S105
 
@@ -59,7 +61,7 @@ class Serializable:
         Returns:
             str: the normalized key
         """
-        return key.replace(NODE_KEY_TOKEN, str())
+        return camelize(key.replace(NODE_KEY_TOKEN, str()))
 
     def serialize_value(self, value: Any) -> Any:
         """Serialize a value if it's Serializable.

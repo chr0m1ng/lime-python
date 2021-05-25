@@ -1,3 +1,5 @@
+from humps import decamelize
+
 from ..serializable import Serializable
 
 NORMALIZED_KEYS = frozenset(('from', 'type'))
@@ -12,6 +14,7 @@ class DictToClass(Serializable):
         self.__class__ = class_type
 
     def __normalize_key(self, key) -> str:
+        key = decamelize(key)
         if key in NORMALIZED_KEYS:
             key = f'{key}_n'
         return key
