@@ -13,7 +13,7 @@ class Transport(EnvelopeListener):
         self.encryption = encryption
 
     @abstractmethod
-    def open(self, uri: str) -> None:
+    def open(self, uri: str = None) -> None:
         """Open a new connection.
 
         Args:
