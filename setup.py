@@ -10,7 +10,7 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
-    version='v2.0.0',
+    version='v2.0.1',
     license='apache-2.0',
     description='This module implements the LIME protocol',
     author='Gabriel Santos <gabrielr@take.net>, Luis Araújo <luisc@take.net>',
