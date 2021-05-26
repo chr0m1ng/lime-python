@@ -1,6 +1,6 @@
 from abc import abstractmethod
-from typing import List
 from asyncio import Future
+from typing import List
 
 from ..listeners import EnvelopeListener
 
