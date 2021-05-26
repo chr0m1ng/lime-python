@@ -1,4 +1,4 @@
-from asyncio import Future, ensure_future, get_running_loop
+from asyncio import Future, ensure_future, get_running_loop  # no
 from functools import partial
 from ..command import Command
 from ..constants import SessionState
@@ -267,10 +267,18 @@ class ClientChannel(Channel):
     def __empty_method(self) -> None:
         pass
 
-    def __on_session_finished_callbacks(self, fut: Future, session: Session) -> None:  # noqa: E501
+    def __on_session_finished_callbacks(
+        self,
+        fut: Future,
+        session: Session
+    ) -> None:
         self.__on_session_finished(session)
         self.on_session_finished(session)
 
-    def __on_session_failed_callbacks(self, fut: Future, session: Session) -> None:  # noqa: E501
+    def __on_session_failed_callbacks(
+        self,
+        fut: Future,
+        session: Session
+    ) -> None:
         self.__on_session_failed(session)
         self.on_session_failed(session)
