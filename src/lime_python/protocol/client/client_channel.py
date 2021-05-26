@@ -201,13 +201,13 @@ class ClientChannel(Channel):
             return
 
         if session.state == SessionState.FINISHED:
-            self.transport.close()
+            self.transport.close_async()
             self.on_session_finished(session)
             self.__on_session_finished(session)
             return
 
         if session.state == SessionState.FAILED:
-            self.transport.close()
+            self.transport.close_async()
             self.on_session_failed(session)
             self.__on_session_failed(session)
             return

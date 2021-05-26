@@ -180,7 +180,7 @@ class TestClientChannel:
         session.id = SESSION_ID
 
         spy = mocker.spy(client, 'on_session_finished')
-        spy_transport = mocker.spy(client.transport, 'close')
+        spy_transport = mocker.spy(client.transport, 'close_async')
         # Act
         client.on_session(session)
 
@@ -200,7 +200,7 @@ class TestClientChannel:
         session.id = SESSION_ID
 
         spy = mocker.spy(client, 'on_session_failed')
-        spy_transport = mocker.spy(client.transport, 'close')
+        spy_transport = mocker.spy(client.transport, 'close_async')
         # Act
         client.on_session(session)
 
