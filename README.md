@@ -3,7 +3,10 @@
 > Python implementation of LIME - A lightweight messaging library
 
 [![wemake-python-styleguide](https://img.shields.io/badge/style-wemake-000000.svg)](https://github.com/wemake-services/wemake-python-styleguide)
-[![Build Status](https://travis-ci.org/takenet/lime-python.svg?branch=master)](https://travis-ci.org/takenet/lime-python)
+[![build](https://github.com/chr0m1ng/lime-python/actions/workflows/unit-testing.yml/badge.svg)](https://github.com/chr0m1ng/lime-python/actions/workflows/unit-testing.yml)
+[![pypi publish](https://github.com/chr0m1ng/lime-python/actions/workflows/publish-package.yml/badge.svg)](https://github.com/chr0m1ng/lime-python/actions/workflows/publish-package.yml)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/lime-python)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/lime-python)
 
 LIME allows you to build scalable, real-time messaging applications using a JSON-based [open protocol](http://limeprotocol.org). It's **asynchronous** and supports any persistent transport like TCP or Websockets.
 
