@@ -1,4 +1,4 @@
-from asyncio import Future
+from asyncio import Future, get_running_loop
 from typing import List
 from src import Envelope, Transport
 
@@ -26,4 +26,7 @@ class TransportDummy(Transport):
         pass
 
     def close_async(self) -> Future:
-        pass
+        loop = get_running_loop()
+        future = loop.create_future()
+        future.set_result(None)
+        return future
