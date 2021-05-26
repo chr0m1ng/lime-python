@@ -1,5 +1,5 @@
-from asyncio import Future, get_running_loop
-
+from asyncio import Future, ensure_future, get_running_loop  # no
+from functools import partial
 from ..command import Command
 from ..constants import SessionState
 from ..message import Message
@@ -201,15 +201,18 @@ class ClientChannel(Channel):
             return
 
         if session.state == SessionState.FINISHED:
-            self.transport.close()
-            self.on_session_finished(session)
-            self.__on_session_finished(session)
+
+            task = ensure_future(self.transport.close_async())
+            task.add_done_callback(
+                partial(self.__on_session_finished_callbacks, session=session)
+            )
             return
 
         if session.state == SessionState.FAILED:
-            self.transport.close()
-            self.on_session_failed(session)
-            self.__on_session_failed(session)
+            task = ensure_future(self.transport.close_async())
+            task.add_done_callback(
+                partial(self.__on_session_failed_callbacks, session=session)
+            )
             return
 
     def on_message(self, message: Message) -> None:  # noqa: D102
@@ -263,3 +266,19 @@ class ClientChannel(Channel):
 
     def __empty_method(self) -> None:
         pass
+
+    def __on_session_finished_callbacks(
+        self,
+        fut: Future,
+        session: Session
+    ) -> None:
+        self.__on_session_finished(session)
+        self.on_session_finished(session)
+
+    def __on_session_failed_callbacks(
+        self,
+        fut: Future,
+        session: Session
+    ) -> None:
+        self.__on_session_failed(session)
+        self.on_session_failed(session)

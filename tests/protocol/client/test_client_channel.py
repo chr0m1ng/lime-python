@@ -179,13 +179,11 @@ class TestClientChannel:
         session = Session(SessionState.FINISHED)
         session.id = SESSION_ID
 
-        spy = mocker.spy(client, 'on_session_finished')
-        spy_transport = mocker.spy(client.transport, 'close')
+        spy_transport = mocker.spy(client.transport, 'close_async')
         # Act
         client.on_session(session)
 
         # Assert
-        spy.assert_called_once_with(session)
         spy_transport.assert_called_once()
 
     @pytest.mark.asyncio
@@ -199,13 +197,11 @@ class TestClientChannel:
         session = Session(SessionState.FAILED)
         session.id = SESSION_ID
 
-        spy = mocker.spy(client, 'on_session_failed')
-        spy_transport = mocker.spy(client.transport, 'close')
+        spy_transport = mocker.spy(client.transport, 'close_async')
         # Act
         client.on_session(session)
 
         # Assert
-        spy.assert_called_once_with(session)
         spy_transport.assert_called_once()
 
     @pytest.mark.asyncio
