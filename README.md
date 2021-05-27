@@ -34,9 +34,9 @@ All envelope types share some properties (like the `id` - the envelope unique id
 
 ### Transports
 
-The `Transport` interface represents a persistent transport connection that allows the management of the connection state, besides sending and receiving envelopes. Currently, the python implementation provides one package for Lime transport class. These are publicly available on PYPI and on our [Github](https://github.com/takenet):
+The `Transport` interface represents a persistent transport connection that allows the management of the connection state, besides sending and receiving envelopes. Currently, the python implementation provides one package for Lime transport class. These are publicly available on PyPI and on our [Github](https://github.com/chr0m1ng/lime-python-transports):
 
-* TBD
+* [WebSocket](https://github.com/chr0m1ng/lime-python-transports/tree/master/lime-transport-websocket)
 
 ### Channels
 
@@ -69,7 +69,7 @@ class MyClass:
 
 ### Starting a connection
 
-To start a connection with a server in a specific domain, the client can use **DNS queries** to check for a *lime* SRV entry and get the server address. This is not mandatory and the client can use static connection information, but its a good idea to rely on DNS since the protocol is domain based. In the code, the method `open` of the  `Transport` interface should be called passing the remote URI (in the server, the URI parameter can be null).
+To start a connection with a server in a specific domain, the client can use **DNS queries** to check for a *lime* SRV entry and get the server address. This is not mandatory and the client can use static connection information, but its a good idea to rely on DNS since the protocol is domain based. In the code, the method `open_async` of the  `Transport` interface should be called passing the remote URI (in the server, the URI parameter can be null).
 
 After connecting the transport, the client should send a **new session** envelope to start the session negotiation. The `ClientChannel` class provides the method `start_new_session_async` for that.
 
@@ -78,9 +78,9 @@ After connecting the transport, the client should send a **new session** envelop
 ```py
 # Creates a new transport and connect to the server
 server_uri = 'net.tcp://localhost:55321'
-transport = TBD()
+transport = WebsocketTransport()
 
-transport.open(server_uri)
+await transport.open_async(server_uri)
 client_channel = ClientChannel(transport)
 ```
 
