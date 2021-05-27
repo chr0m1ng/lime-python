@@ -1,5 +1,4 @@
 from abc import abstractmethod
-from asyncio import Future
 from typing import List
 
 from ..listeners import EnvelopeListener
@@ -13,7 +12,7 @@ class Transport(EnvelopeListener):
         self.encryption = encryption
 
     @abstractmethod
-    def open_async(self, uri: str = None) -> Future:
+    async def open_async(self, uri: str = None) -> None:
         """Open a new connection.
 
         Args:
@@ -22,7 +21,7 @@ class Transport(EnvelopeListener):
         pass
 
     @abstractmethod
-    def close_async(self) -> Future:
+    async def close_async(self) -> None:
         """Close a open connection."""
         pass
 

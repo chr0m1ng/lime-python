@@ -1,10 +1,9 @@
-from asyncio import Future, get_running_loop
 from typing import List
 from src import Envelope, Transport
 
 
 class TransportDummy(Transport):
-    def open_async(self, uri: str) -> Future:
+    async def open_async(self, uri: str) -> None:
         pass
 
     def send(self, envelope: Envelope):
@@ -25,8 +24,5 @@ class TransportDummy(Transport):
     def set_encryption(self, encryption: str):
         pass
 
-    def close_async(self) -> Future:
-        loop = get_running_loop()
-        future = loop.create_future()
-        future.set_result(None)
-        return future
+    async def close_async(self) -> None:
+        pass
