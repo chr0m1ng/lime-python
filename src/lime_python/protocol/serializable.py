@@ -1,7 +1,7 @@
 import json
 from typing import Any
-
 from humps import camelize
+from .utilities import DictToClass
 
 PRIVATE_TOKEN = '_'  # noqa: S105
 NODE_KEY_TOKEN = '_n'  # noqa: S105
@@ -9,6 +9,18 @@ NODE_KEY_TOKEN = '_n'  # noqa: S105
 
 class Serializable:
     """Serializable objects to json."""
+
+    @classmethod
+    def from_json(cls: Any, raw_json: dict) -> Any:
+        """Deserialize the given json.
+
+        Args:
+            raw_json (dict): the json
+
+        Returns:
+            Any: the deserialized class
+        """
+        return DictToClass(raw_json, cls)
 
     def __str__(self) -> str:
         """Override str representation.

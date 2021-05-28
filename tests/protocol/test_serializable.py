@@ -1,12 +1,17 @@
+from pytest import fixture
+
 from src import Serializable
 
 
 class TestSerializable:
-    def test_normalize_key(self):
+
+    @fixture
+    def target(self) -> Serializable:
+        return Serializable()
+
+    def test_normalize_key(self, target: Serializable) -> None:
         # Arrange
         node_key = 'from_n'
-        target = self.get_target()
-
         expected_result = 'from'
 
         # Act
@@ -15,10 +20,9 @@ class TestSerializable:
         # Assert
         assert result == expected_result
 
-    def test_serialize_value_native(self):
+    def test_serialize_value_native(self, target: Serializable) -> None:
         # Arrange
         value = 123
-        target = self.get_target()
 
         # Act
         result = target.serialize_value(value)
@@ -26,10 +30,9 @@ class TestSerializable:
         # Assert
         assert result == value
 
-    def test_serialize_value_serializable(self):
+    def test_serialize_value_serializable(self, target: Serializable) -> None:
         # Arrange
         value = DummySerializable()
-        target = self.get_target()
 
         # Act
         result = target.serialize_value(value)
@@ -64,8 +67,31 @@ class TestSerializable:
         # Assert
         assert result == expected_result
 
-    def get_target(self):
-        return Serializable()
+    def test_from_json(self):
+        # Arrange
+        class Mock(Serializable):
+            batata = 123
+
+            def __init__(self):
+                self.mock = 'value'
+                self.some_n = 123
+                self.__private = 'not-showing'
+                self.not_showing = None
+                self.should_be_in_camel = 'yes'
+
+        expected_result = Mock()
+
+        raw_json = {
+            'mock': 'value',
+            'some': 123,
+            'shouldBeInCamel': 'yes'
+        }
+
+        # Act
+        result = Mock.from_json(raw_json)
+
+        # Assert
+        assert result == expected_result
 
 
 class DummySerializable(Serializable):

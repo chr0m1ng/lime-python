@@ -1,5 +1,6 @@
 from asyncio import Future, ensure_future, get_running_loop  # no
 from functools import partial
+from typing import Awaitable
 from ..command import Command
 from ..constants import SessionState
 from ..message import Message
@@ -19,7 +20,7 @@ class ClientChannel(Channel):
         identity: str,
         authentication: Authentication,
         instance: str
-    ) -> Session:
+    ) -> Awaitable[Session]:
         """Esablish a new session.
 
         Args:
@@ -49,7 +50,7 @@ class ClientChannel(Channel):
         self.__reset_session_listeners()
         return session
 
-    def start_new_session_async(self) -> Future:
+    def start_new_session_async(self) -> Awaitable[Session]:
         """Start new session.
 
         Returns:
@@ -73,7 +74,7 @@ class ClientChannel(Channel):
         self,
         session_compression: str,
         session_encryption: str
-    ) -> Future:
+    ) -> Awaitable[Session]:
         """Handle session in negotiating state.
 
         Args:
@@ -107,7 +108,7 @@ class ClientChannel(Channel):
         identity: str,
         authentication: Authentication,
         instance: str
-    ) -> Future:
+    ) -> Awaitable[Session]:
         """Authenticate session.
 
         Args:
@@ -137,7 +138,7 @@ class ClientChannel(Channel):
 
         return future
 
-    def send_finishing_session_async(self) -> Future:
+    def send_finishing_session_async(self) -> Awaitable[Session]:
         """Handle session in state finishing.
 
         Returns:
@@ -158,7 +159,7 @@ class ClientChannel(Channel):
 
         return future
 
-    def on_session_finished(self, session: Session):
+    def on_session_finished(self, session: Session) -> None:
         """Handle callback on session finished.
 
         Args:
@@ -166,7 +167,7 @@ class ClientChannel(Channel):
         """
         pass
 
-    def on_session_failed(self, session: Session):
+    def on_session_failed(self, session: Session) -> None:
         """Handle callback on session failed.
 
         Args:

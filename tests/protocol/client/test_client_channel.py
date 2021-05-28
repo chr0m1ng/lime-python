@@ -1,5 +1,7 @@
 from asyncio import Future
-import pytest
+from typing import Any, Awaitable
+
+from pytest import fixture, mark
 from pytest_mock import MockerFixture
 
 from src import (ClientChannel, PlainAuthentication, Session,
@@ -15,34 +17,42 @@ FROM_N = 'you@take.net'
 
 class TestClientChannel:
 
-    @pytest.mark.asyncio
+    @fixture(autouse=True)
+    def target(self) -> ClientChannel:
+        yield ClientChannel(
+            TransportDummy(SessionCompression.NONE, SessionEncryption.NONE),
+            False,
+            False
+        )
+
+    @mark.asyncio
     async def test_start_new_session_async(
         self,
-        mocker: MockerFixture
-    ) -> None:
+        mocker: MockerFixture,
+        target: ClientChannel
+    ) -> Awaitable:
         # Arrange
-        client = self.__get_target()
-        client.state = SessionState.NEW
+        target.state = SessionState.NEW
 
-        spy = mocker.spy(client, SEND_SESSION_METHOD)
+        spy = mocker.spy(target, SEND_SESSION_METHOD)
         sent_session = Session(SessionState.NEW)
 
         # Act
-        client.start_new_session_async()
+        target.start_new_session_async()
 
         # Assert
         spy.assert_called_once_with(sent_session)
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_negotiate_session_async(
         self,
-        mocker: MockerFixture
-    ) -> None:
+        mocker: MockerFixture,
+        target: ClientChannel
+    ) -> Awaitable:
         # Arrange
-        client = self.__get_target()
-        client.state = SessionState.NEGOTIATING
+        target.state = SessionState.NEGOTIATING
 
-        spy = mocker.spy(client, SEND_SESSION_METHOD)
+        spy = mocker.spy(target, SEND_SESSION_METHOD)
         sent_session = Session(
             SessionState.NEGOTIATING,
             compression=SessionCompression.GZIP,
@@ -50,7 +60,7 @@ class TestClientChannel:
         )
 
         # Act
-        client.negotiate_session_async(
+        target.negotiate_session_async(
             SessionCompression.GZIP,
             SessionEncryption.TLS
         )
@@ -58,17 +68,17 @@ class TestClientChannel:
         # Assert
         spy.assert_called_once_with(sent_session)
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_authenticate_session_async(
         self,
-        mocker: MockerFixture
-    ) -> None:
+        mocker: MockerFixture,
+        target: ClientChannel
+    ) -> Awaitable:
         # Arrange
-        client = self.__get_target()
-        client.state = SessionState.AUTHENTICATING
-        client.session_id = SESSION_ID
+        target.state = SessionState.AUTHENTICATING
+        target.session_id = SESSION_ID
 
-        spy = mocker.spy(client, SEND_SESSION_METHOD)
+        spy = mocker.spy(target, SEND_SESSION_METHOD)
         identity = 'test@take.net'
         instance = 'test'
         authentication = PlainAuthentication('any-pswd')
@@ -81,7 +91,7 @@ class TestClientChannel:
         sent_session.id = SESSION_ID
 
         # Act
-        client.authenticate_session_async(
+        target.authenticate_session_async(
             identity,
             authentication,
             instance
@@ -90,152 +100,147 @@ class TestClientChannel:
         # Assert
         spy.assert_called_once_with(sent_session)
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_send_finishing_session_async(
         self,
-        mocker: MockerFixture
-    ) -> None:
+        mocker: MockerFixture,
+        target: ClientChannel
+    ) -> Awaitable:
         # Arrange
-        client = self.__get_target()
-        client.state = SessionState.ESTABLISHED
-        client.session_id = SESSION_ID
+        target.state = SessionState.ESTABLISHED
+        target.session_id = SESSION_ID
 
-        spy = mocker.spy(client, SEND_SESSION_METHOD)
+        spy = mocker.spy(target, SEND_SESSION_METHOD)
         sent_session = Session(SessionState.FINISHING)
         sent_session.id = SESSION_ID
 
         # Act
-        client.send_finishing_session_async()
+        target.send_finishing_session_async()
 
         # Assert
         spy.assert_called_once_with(sent_session)
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_on_session_established(
         self,
-        mocker: MockerFixture
-    ) -> None:
+        mocker: MockerFixture,
+        target: ClientChannel
+    ) -> Awaitable:
         # Arrange
-        client = self.__get_target()
-
         session = Session(SessionState.ESTABLISHED)
         session.id = SESSION_ID
         session.to = TO
         session.from_n = FROM_N
 
-        spy = mocker.spy(client, 'on_session_established')
+        spy = mocker.spy(target, 'on_session_established')
         # Act
-        client.on_session(session)
+        target.on_session(session)
 
         # Assert
         spy.assert_called_once_with(session)
-        assert client.local_node == str(session.to)
-        assert client.remote_node == session.from_n
+        assert target.local_node == str(session.to)
+        assert target.remote_node == session.from_n
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_on_session_negotiating(
         self,
-        mocker: MockerFixture
-    ) -> None:
+        mocker: MockerFixture,
+        target: ClientChannel
+    ) -> Awaitable:
         # Arrange
-        client = self.__get_target()
-
         session = Session(SessionState.NEGOTIATING)
         session.id = SESSION_ID
 
-        spy = mocker.spy(client, 'on_session_negotiating')
+        spy = mocker.spy(target, 'on_session_negotiating')
         # Act
-        client.on_session(session)
+        target.on_session(session)
 
         # Assert
         spy.assert_called_once_with(session)
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_on_session_authenticating(
         self,
-        mocker: MockerFixture
-    ) -> None:
+        mocker: MockerFixture,
+        target: ClientChannel
+    ) -> Awaitable:
         # Arrange
-        client = self.__get_target()
-
         session = Session(SessionState.AUTHENTICATING)
         session.id = SESSION_ID
 
-        spy = mocker.spy(client, 'on_session_authenticating')
+        spy = mocker.spy(target, 'on_session_authenticating')
         # Act
-        client.on_session(session)
+        target.on_session(session)
 
         # Assert
         spy.assert_called_once_with(session)
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_on_session_finished(
         self,
-        mocker: MockerFixture
-    ) -> None:
+        mocker: MockerFixture,
+        target: ClientChannel
+    ) -> Awaitable:
         # Arrange
-        client = self.__get_target()
-
         session = Session(SessionState.FINISHED)
         session.id = SESSION_ID
 
-        spy_transport = mocker.spy(client.transport, 'close_async')
+        spy_transport = mocker.spy(target.transport, 'close_async')
         # Act
-        client.on_session(session)
+        target.on_session(session)
 
         # Assert
         spy_transport.assert_called_once()
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_on_session_failed(
         self,
-        mocker: MockerFixture
-    ) -> None:
+        mocker: MockerFixture,
+        target: ClientChannel
+    ) -> Awaitable:
         # Arrange
-        client = self.__get_target()
-
         session = Session(SessionState.FAILED)
         session.id = SESSION_ID
 
-        spy_transport = mocker.spy(client.transport, 'close_async')
+        spy_transport = mocker.spy(target.transport, 'close_async')
         # Act
-        client.on_session(session)
+        target.on_session(session)
 
         # Assert
         spy_transport.assert_called_once()
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_establish_session_async(
         self,
-        mocker: MockerFixture
-    ) -> None:
+        mocker: MockerFixture,
+        target: ClientChannel
+    ) -> Awaitable:
         # Arrange
-        client = self.__get_target()
         compression = SessionCompression.GZIP
         encryption = SessionEncryption.TLS
         identity = TO
         authentication = PlainAuthentication('any-pswd')
         instance = 'test'
 
-        client.state = SessionState.NEW
+        target.state = SessionState.NEW
 
         start_result = Session(SessionState.AUTHENTICATING)
 
         auth_result = Session(SessionState.ESTABLISHED)
 
         mocker.patch.object(  # noqa: WPS316
-            client,
+            target,
             'start_new_session_async',
             return_value=self.__async_return(start_result)
         )
         mocker.patch.object(
-            client,
+            target,
             'authenticate_session_async',
             return_value=self.__async_return(auth_result)
         )
 
         # Act
-        result: Future = await client.establish_session_async(
+        result: Future = await target.establish_session_async(
             compression,
             encryption,
             identity,
@@ -246,20 +251,20 @@ class TestClientChannel:
         # Assert
         assert result == Session(SessionState.ESTABLISHED)
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_establish_session_async_with_encryption_compression_options(
         self,
-        mocker: MockerFixture
-    ) -> None:
+        mocker: MockerFixture,
+        target: ClientChannel
+    ) -> Awaitable:
         # Arrange
-        client = self.__get_target()
         compression = None
         encryption = None
         identity = TO
         authentication = PlainAuthentication('any-pswd')
         instance = 'test'
 
-        client.state = SessionState.NEW
+        target.state = SessionState.NEW
 
         start_result = Session(
             SessionState.NEGOTIATING,
@@ -272,23 +277,23 @@ class TestClientChannel:
         auth_result = Session(SessionState.ESTABLISHED)
 
         mocker.patch.object(  # noqa: WPS316
-            client,
+            target,
             'start_new_session_async',
             return_value=self.__async_return(start_result)
         )
         mocker.patch.object(  # noqa: WPS316
-            client,
+            target,
             'negotiate_session_async',
             return_value=self.__async_return(neg_result)
         )
         mocker.patch.object(
-            client,
+            target,
             'authenticate_session_async',
             return_value=self.__async_return(auth_result)
         )
 
         # Act
-        result: Future = await client.establish_session_async(
+        result: Future = await target.establish_session_async(
             compression,
             encryption,
             identity,
@@ -299,20 +304,7 @@ class TestClientChannel:
         # Assert
         assert result == Session(SessionState.ESTABLISHED)
 
-    def __get_target(
-        self,
-        compression: str = SessionCompression.NONE,
-        encryption: str = SessionEncryption.NONE,
-        auto_reply_pings: bool = False,
-        auto_notify_receipt: bool = False
-    ) -> ClientChannel:
-        return ClientChannel(
-            TransportDummy(compression, encryption),
-            auto_reply_pings,
-            auto_notify_receipt
-        )
-
-    def __async_return(self, result) -> Future:
+    def __async_return(self, result: Any) -> Awaitable[Any]:
         fut = Future()
         fut.set_result(result)
         return fut

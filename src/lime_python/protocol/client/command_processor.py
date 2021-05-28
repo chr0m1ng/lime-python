@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Awaitable
 
 from ..command import Command
 from ..listeners import CommandListener
@@ -12,7 +13,7 @@ class CommandProcessor(CommandListener):
         self,
         command: Command,
         timeout: float
-    ) -> Command:
+    ) -> Awaitable[Command]:
         """Process a Command asynchronously and return the result.
 
         Args:
