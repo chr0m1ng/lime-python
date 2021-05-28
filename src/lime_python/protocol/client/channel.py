@@ -1,16 +1,15 @@
 from asyncio import Future, get_running_loop, wait_for
 from functools import partial
-from typing import Callable, Dict, List
+from typing import Awaitable, Callable, Dict, List
 
 from ..command import Command
-from ..constants import (CommandMethod, CommandStatus, ContentTypes,
-                         NotificationEvent, SessionState, UriTemplates)
+from ..constants import (CommandMethod, CommandStatus, CommonConstants,
+                         ContentTypes, NotificationEvent, SessionState)
 from ..envelope import Envelope
 from ..message import Message
 from ..network import Transport
 from ..notification import Notification
 from ..session import Session
-from ..utilities import DictToClass
 from .channels import (CommandChannel, MessageChannel, NotificationChannel,
                        SessionChannel)
 from .command_processor import CommandProcessor
@@ -61,7 +60,7 @@ class Channel(
         self,
         command: Command,
         timeout: float
-    ) -> Command:
+    ) -> Awaitable[Command]:
         loop = get_running_loop()
         future = loop.create_future()
         self.command_resolves[command.id] = future.set_result
@@ -110,23 +109,21 @@ class Channel(
         Args:
             envelope (dict): The received raw envelope
         """
-        envelope: Envelope = DictToClass(envelope, Envelope)
-
         if Envelope.is_message(envelope):
-            envelope.__class__ = Message
+            envelope: Message = Message.from_json(envelope)
             self.__notify_message(envelope)
             self.on_message(envelope)
 
         elif Envelope.is_notification(envelope):
-            envelope.__class__ = Notification
+            envelope: Notification = Notification.from_json(envelope)
             self.on_notification(envelope)
 
         elif Envelope.is_session(envelope):
-            envelope.__class__ = Session
+            envelope: Session = Session.from_json(envelope)
             self.on_session(envelope)
 
         elif Envelope.is_command(envelope):
-            envelope.__class__ = Command
+            envelope: Command = Command.from_json(envelope)
             if hasattr(envelope, 'status') and envelope.status:
                 set_result = self.command_resolves.get(envelope.id)
 
@@ -180,7 +177,7 @@ class Channel(
     def __should_reply_command(self, command: Command) -> bool:
         return self.auto_reply_pings and \
             command.id and \
-            command.uri == UriTemplates.PING and \
+            command.uri == CommonConstants.PING and \
             command.method == CommandMethod.GET and \
             self.is_for_me(command)  # noqa: WPS222
 

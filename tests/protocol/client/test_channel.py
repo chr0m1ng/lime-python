@@ -5,16 +5,15 @@ from typing import Callable
 import pytest
 from pytest_mock import MockerFixture
 
-from src import (Channel, Command, CommandMethod, CommandStatus, ContentTypes,
+from src import (Channel, Command, CommandMethod, CommandStatus, CommonConstants, ContentTypes,
                  Message, Notification, NotificationEvent, Session,
-                 SessionCompression, SessionEncryption, SessionState,
-                 UriTemplates)
+                 SessionCompression, SessionEncryption, SessionState)
 from .transport_dummy import TransportDummy
 
 
 class TestChannel:
 
-    def test_ensure_allowed_states(self):
+    def test_ensure_allowed_states(self) -> None:
         # Arrange
         channel = self.__get_target(SessionState.FAILED)
         session = Session(SessionState.AUTHENTICATING)
@@ -23,7 +22,7 @@ class TestChannel:
         with pytest.raises(ValueError):
             channel.send_command(session)
 
-    def test_ensure_not_allowed_states(self):
+    def test_ensure_not_allowed_states(self) -> None:
         # Arrange
         channel = self.__get_target(SessionState.FAILED)
         session = Session(SessionState.AUTHENTICATING)
@@ -33,21 +32,21 @@ class TestChannel:
             channel.send_command(session)
 
     @pytest.mark.asyncio
-    async def test_process_command_timeout_async(self):
+    async def test_process_command_timeout_async(self) -> None:
         # Arrange
         channel = self.__get_target()
-        command = Command(CommandMethod.GET, UriTemplates.PING)
+        command = Command(CommandMethod.GET, CommonConstants.PING)
 
         # Assert
         with pytest.raises(TimeoutError):
             await channel.process_command_async(command, 1.0)
 
     @pytest.mark.asyncio
-    async def test_process_command_async(self):
+    async def test_process_command_async(self) -> None:
         # Arrange
         channel = self.__get_target()
 
-        command = Command(CommandMethod.GET, UriTemplates.PING)
+        command = Command(CommandMethod.GET, CommonConstants.PING)
         command.id = '1234'
         command_response = {
             'id': '1234',
@@ -76,11 +75,11 @@ class TestChannel:
         assert bool(pending) is False
         assert result.to_json() == command_response
 
-    async def act_with_delay_async(self, act: Callable, delay: int):
+    async def act_with_delay_async(self, act: Callable, delay: int) -> None:
         await sleep(delay)
         act()
 
-    def test_on_envelope_message(self, mocker: MockerFixture):
+    def test_on_envelope_message(self, mocker: MockerFixture) -> None:
         # Arrange
         channel = self.__get_target()
         message = Message(ContentTypes.PING, {})
@@ -92,7 +91,7 @@ class TestChannel:
         # Assert
         spy.assert_called_once_with(message)
 
-    def test_on_envelope_notification(self, mocker: MockerFixture):
+    def test_on_envelope_notification(self, mocker: MockerFixture) -> None:
         # Arrange
         channel = self.__get_target()
         notification = Notification(NotificationEvent.CONSUMED)
@@ -104,7 +103,7 @@ class TestChannel:
         # Assert
         spy.assert_called_once_with(notification)
 
-    def test_on_envelope_session(self, mocker: MockerFixture):
+    def test_on_envelope_session(self, mocker: MockerFixture) -> None:
         # Arrange
         channel = self.__get_target()
         session = Session(SessionState.FINISHED)
@@ -116,7 +115,7 @@ class TestChannel:
         # Assert
         spy.assert_called_once_with(session)
 
-    def test_on_envelope_command(self, mocker: MockerFixture):
+    def test_on_envelope_command(self, mocker: MockerFixture) -> None:
         # Arrange
         channel = self.__get_target()
         command = Command(CommandMethod.GET)
@@ -128,7 +127,7 @@ class TestChannel:
         # Assert
         spy.assert_called_once_with(command)
 
-    def __get_target(self, state: str = SessionState.ESTABLISHED):
+    def __get_target(self, state: str = SessionState.ESTABLISHED) -> None:
         transport = TransportDummy(
             SessionCompression.NONE,
             SessionEncryption.TLS

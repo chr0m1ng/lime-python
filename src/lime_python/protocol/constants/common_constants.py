@@ -3,3 +3,4 @@ class CommonConstants:
 
     DOMAIN_SEPARATOR = '@'
     INSTANCE_SEPARATOR = '/'
+    PING = '/ping'

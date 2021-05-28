@@ -8,4 +8,3 @@ from .reason_code import *
 from .session_compression import *
 from .session_encryption import *
 from .session_state import *
-from .uri_templates import *
