@@ -5,9 +5,11 @@ from typing import Callable
 import pytest
 from pytest_mock import MockerFixture
 
-from src import (Channel, Command, CommandMethod, CommandStatus, CommonConstants, ContentTypes,
-                 Message, Notification, NotificationEvent, Session,
-                 SessionCompression, SessionEncryption, SessionState)
+from src import (Channel, Command, CommandMethod, CommandStatus,
+                 CommonConstants, ContentTypes, Message, Notification,
+                 NotificationEvent, Session, SessionCompression,
+                 SessionEncryption, SessionState)
+
 from .transport_dummy import TransportDummy
 
 

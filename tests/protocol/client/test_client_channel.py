@@ -1,5 +1,6 @@
 from asyncio import Future
 from typing import Any, Awaitable
+
 from pytest import fixture, mark
 from pytest_mock import MockerFixture
 
