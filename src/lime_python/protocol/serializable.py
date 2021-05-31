@@ -30,6 +30,14 @@ class Serializable:
         """
         return json.dumps(self.to_json())
 
+    def __repr__(self) -> str:
+        """Representation of the class.
+
+        Returns:
+            str: json representation
+        """
+        return str(self)
+
     def __eq__(self, obj: object) -> bool:
         """Override equal to compare serializated content.
 
