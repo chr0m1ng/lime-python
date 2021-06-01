@@ -20,7 +20,7 @@ class ClientChannel(Channel):
         identity: str,
         authentication: Authentication,
         instance: str
-    ) -> Awaitable[Session]:
+    ) -> Session:
         """Esablish a new session.
 
         Args:

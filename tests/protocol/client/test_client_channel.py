@@ -30,7 +30,7 @@ class TestClientChannel:
         self,
         mocker: MockerFixture,
         target: ClientChannel
-    ) -> Awaitable:
+    ) -> None:
         # Arrange
         target.state = SessionState.NEW
 
@@ -48,7 +48,7 @@ class TestClientChannel:
         self,
         mocker: MockerFixture,
         target: ClientChannel
-    ) -> Awaitable:
+    ) -> None:
         # Arrange
         target.state = SessionState.NEGOTIATING
 
@@ -73,7 +73,7 @@ class TestClientChannel:
         self,
         mocker: MockerFixture,
         target: ClientChannel
-    ) -> Awaitable:
+    ) -> None:
         # Arrange
         target.state = SessionState.AUTHENTICATING
         target.session_id = SESSION_ID
@@ -105,7 +105,7 @@ class TestClientChannel:
         self,
         mocker: MockerFixture,
         target: ClientChannel
-    ) -> Awaitable:
+    ) -> None:
         # Arrange
         target.state = SessionState.ESTABLISHED
         target.session_id = SESSION_ID
@@ -125,7 +125,7 @@ class TestClientChannel:
         self,
         mocker: MockerFixture,
         target: ClientChannel
-    ) -> Awaitable:
+    ) -> None:
         # Arrange
         session = Session(SessionState.ESTABLISHED)
         session.id = SESSION_ID
@@ -146,7 +146,7 @@ class TestClientChannel:
         self,
         mocker: MockerFixture,
         target: ClientChannel
-    ) -> Awaitable:
+    ) -> None:
         # Arrange
         session = Session(SessionState.NEGOTIATING)
         session.id = SESSION_ID
@@ -163,7 +163,7 @@ class TestClientChannel:
         self,
         mocker: MockerFixture,
         target: ClientChannel
-    ) -> Awaitable:
+    ) -> None:
         # Arrange
         session = Session(SessionState.AUTHENTICATING)
         session.id = SESSION_ID
@@ -180,7 +180,7 @@ class TestClientChannel:
         self,
         mocker: MockerFixture,
         target: ClientChannel
-    ) -> Awaitable:
+    ) -> None:
         # Arrange
         session = Session(SessionState.FINISHED)
         session.id = SESSION_ID
@@ -197,7 +197,7 @@ class TestClientChannel:
         self,
         mocker: MockerFixture,
         target: ClientChannel
-    ) -> Awaitable:
+    ) -> None:
         # Arrange
         session = Session(SessionState.FAILED)
         session.id = SESSION_ID
@@ -214,7 +214,7 @@ class TestClientChannel:
         self,
         mocker: MockerFixture,
         target: ClientChannel
-    ) -> Awaitable:
+    ) -> None:
         # Arrange
         compression = SessionCompression.GZIP
         encryption = SessionEncryption.TLS
@@ -256,7 +256,7 @@ class TestClientChannel:
         self,
         mocker: MockerFixture,
         target: ClientChannel
-    ) -> Awaitable:
+    ) -> None:
         # Arrange
         compression = None
         encryption = None

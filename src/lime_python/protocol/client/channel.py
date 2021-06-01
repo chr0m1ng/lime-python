@@ -1,6 +1,6 @@
 from asyncio import Future, get_running_loop, wait_for
 from functools import partial
-from typing import Awaitable, Callable, Dict, List
+from typing import Callable, Dict, List
 
 from ..command import Command
 from ..constants import (CommandMethod, CommandStatus, CommonConstants,
@@ -60,7 +60,7 @@ class Channel(
         self,
         command: Command,
         timeout: float
-    ) -> Awaitable[Command]:
+    ) -> Command:
         loop = get_running_loop()
         future = loop.create_future()
         self.command_resolves[command.id] = future.set_result
