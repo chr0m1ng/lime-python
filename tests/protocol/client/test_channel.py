@@ -1,5 +1,4 @@
-from asyncio import TimeoutError, sleep, wait
-from functools import partial
+from asyncio import TimeoutError, ensure_future, sleep
 from typing import Callable
 
 import pytest
@@ -58,28 +57,22 @@ class TestChannel:
             'status': CommandStatus.SUCCESS
         }
 
-        process_command = channel.process_command_async(command, 3.0)  # noqa: WPS432, E501
-
-        on_envelope = self.act_with_delay_async(
-            partial(channel.on_envelope, envelope=command_response),
-            1
+        ensure_future(
+            self.set_timeout(
+                1,
+                lambda: channel.on_envelope(command_response)
+            )
         )
 
         # Act
-        done, pending = await wait({process_command, on_envelope})
-        result: Command = {
-            task.result()
-            for task in done
-            if task.result()
-        }.pop()
+        result: Command = await channel.process_command_async(command, 3)
 
         # Assert
-        assert bool(pending) is False
-        assert result.to_json() == command_response
+        assert result == Command.from_json(command_response)
 
-    async def act_with_delay_async(self, act: Callable, delay: int) -> None:
-        await sleep(delay)
-        act()
+    async def set_timeout(self, timeout: float, action: Callable) -> None:
+        await sleep(timeout)
+        action()
 
     def test_on_envelope_message(self, mocker: MockerFixture) -> None:
         # Arrange
@@ -129,7 +122,7 @@ class TestChannel:
         # Assert
         spy.assert_called_once_with(command)
 
-    def __get_target(self, state: str = SessionState.ESTABLISHED) -> None:
+    def __get_target(self, state: str = SessionState.ESTABLISHED) -> Channel:
         transport = TransportDummy(
             SessionCompression.NONE,
             SessionEncryption.TLS

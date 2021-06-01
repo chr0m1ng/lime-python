@@ -96,11 +96,13 @@ class Channel(
         """  # noqa: E501
         if fut.cancelled():
             command_resolve = command_resolves.get(command.id)
-            if command_resolve is not None:
-                del command_resolves[command.id]
+            if command_resolve is None:
+                return
+            del command_resolves[command.id]
+            command.timeout = True
 
             raise TimeoutError(
-                f'The following command processing has timed out: {command}'
+                f'The following command processing has timed out: {command}'  # noqa: E501
             )
 
     def on_envelope(self, envelope: dict) -> None:  # noqa: WPS231
