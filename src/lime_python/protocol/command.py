@@ -8,7 +8,7 @@ class Command(Envelope):
 
     def __init__(
         self,
-        method: str,
+        method: str = None,
         uri: str = None,
         type_n: str = None,
         resource: Any = None,

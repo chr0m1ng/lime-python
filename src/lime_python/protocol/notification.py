@@ -7,7 +7,7 @@ class Notification(Envelope):
 
     def __init__(
         self,
-        event: str,
+        event: str = None,
         reason: Reason = None,
         **kwargs
     ) -> None:

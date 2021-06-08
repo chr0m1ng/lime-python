@@ -9,7 +9,7 @@ class Session(Envelope):
 
     def __init__(  # noqa: WPS211
         self,
-        state: str,
+        state: str = None,
         encryption_options: List[str] = None,
         encryption: str = None,
         compression_options: List[str] = None,
