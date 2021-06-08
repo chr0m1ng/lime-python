@@ -5,5 +5,5 @@ from .authentication import Authentication
 class GuestAuthentication(Authentication):
     """Guest authentication representation."""
 
-    def __init__(self) -> None:
-        super().__init__(AuthenticationScheme.GUEST)
+    def __init__(self, **kwargs) -> None:
+        super().__init__(AuthenticationScheme.GUEST, **kwargs)

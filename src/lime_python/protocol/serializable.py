@@ -1,10 +1,10 @@
 import json
 from typing import Any
-from humps import camelize
-from .utilities import DictToClass
+from humps import camelize, decamelize
 
 PRIVATE_TOKEN = '_'  # noqa: S105
 NODE_KEY_TOKEN = '_n'  # noqa: S105
+FORBIDDEN_KEYS = frozenset(('from', 'type'))
 
 
 class Serializable:
@@ -20,7 +20,11 @@ class Serializable:
         Returns:
             Any: the deserialized class
         """
-        return DictToClass(raw_json, cls)
+        clean_dict = {
+            Serializable.decamelize_key(key): value
+            for key, value in raw_json.items()
+        }
+        return cls(**clean_dict)
 
     def __str__(self) -> str:
         """Override str representation.
@@ -66,14 +70,13 @@ class Serializable:
             dict: the class json representation without private properties
         """
         return {
-            self.normalize_key(key): self.serialize_value(value)
+            self.camelize_key(key): self.serialize_value(value)
             for key, value in self.__dict__.items()  # noqa: WPS110
             if self.__should_serialize_property(key, value)
         }
 
-    def normalize_key(self, key: str) -> str:
-        """
-        Normalize a class property name.
+    def camelize_key(self, key: str) -> str:
+        """Transform a key from snake_case to camelCase.
 
         Args:
             key (str): property name
@@ -82,6 +85,21 @@ class Serializable:
             str: the normalized key
         """
         return camelize(key.replace(NODE_KEY_TOKEN, str()))
+
+    @staticmethod
+    def decamelize_key(key: str) -> str:
+        """Transform a key from camelCase to snake_case.
+
+        Args:
+            key (str): property name
+
+        Returns:
+            str: the snake_case key
+        """
+        key = decamelize(key)
+        if key in FORBIDDEN_KEYS:
+            key = f'{key}{NODE_KEY_TOKEN}'
+        return key
 
     def serialize_value(self, value: Any) -> Any:
         """Serialize a value if it's Serializable.

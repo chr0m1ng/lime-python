@@ -14,9 +14,10 @@ class Command(Envelope):
         resource: Any = None,
         status: str = None,
         reason: Reason = None,
-        timeout: bool = None
+        timeout: bool = None,
+        **kwargs
     ) -> None:
-        super().__init__()
+        super().__init__(**kwargs)
         self.method = method
         self.uri = uri
         self.type_n = type_n

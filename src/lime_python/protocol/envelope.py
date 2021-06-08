@@ -12,7 +12,8 @@ class Envelope(Serializable):
         from_n: str = None,
         to: str = None,
         pp: str = None,
-        metadata: Dict[str, str] = None
+        metadata: Dict[str, str] = None,
+        **kwargs
     ) -> None:
         self.id = id
         self.from_n = from_n

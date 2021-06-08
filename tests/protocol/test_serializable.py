@@ -9,13 +9,13 @@ class TestSerializable:
     def target(self) -> Serializable:
         return Serializable()
 
-    def test_normalize_key(self, target: Serializable) -> None:
+    def test_camelize_key(self, target: Serializable) -> None:
         # Arrange
         node_key = 'from_n'
         expected_result = 'from'
 
         # Act
-        result = target.normalize_key(node_key)
+        result = target.camelize_key(node_key)
 
         # Assert
         assert result == expected_result
@@ -72,7 +72,7 @@ class TestSerializable:
         class Mock(Serializable):
             batata = 123
 
-            def __init__(self):
+            def __init__(self, **kwargs):
                 self.mock = 'value'
                 self.some_n = 123
                 self.__private = 'not-showing'
