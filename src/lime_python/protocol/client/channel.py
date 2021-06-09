@@ -64,6 +64,8 @@ class Channel(
     ) -> Command:
         loop = get_running_loop()
         future = loop.create_future()
+        if command.id is None:
+            command.id = str(uuid4())
         self.command_resolves[command.id] = future.set_result
 
         self.send_command(command)
