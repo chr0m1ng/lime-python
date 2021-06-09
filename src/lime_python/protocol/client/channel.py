@@ -1,6 +1,7 @@
 from asyncio import Future, get_running_loop, wait_for
 from functools import partial
 from typing import Callable, Dict, List
+from uuid import uuid4
 
 from ..command import Command
 from ..constants import (CommandMethod, CommandStatus, CommonConstants,
@@ -156,6 +157,8 @@ class Channel(
         self.__send(envelope)
 
     def __send(self, envelope: Envelope) -> None:
+        if envelope.id is None:
+            envelope.id = str(uuid4())
         self.transport.send(envelope.to_json())
 
     def __notify_message(self, message: Message) -> None:
