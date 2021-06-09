@@ -41,6 +41,7 @@ class TestClientChannel:
         target.start_new_session_async()
 
         # Assert
+        sent_session.id = spy.call_args[0][0].id
         spy.assert_called_once_with(sent_session)
 
     @mark.asyncio
@@ -66,6 +67,7 @@ class TestClientChannel:
         )
 
         # Assert
+        sent_session.id = spy.call_args[0][0].id
         spy.assert_called_once_with(sent_session)
 
     @mark.asyncio
