@@ -186,7 +186,7 @@ class Channel(
             command.id and \
             command.uri == CommonConstants.PING and \
             command.method == CommandMethod.GET and \
-            self.is_for_me(command)  # noqa: WPS222
+            self.__is_for_me(command)  # noqa: WPS222
 
     def __create_ping_command_reply(self, command: Command) -> Command:
         reply = Command(
