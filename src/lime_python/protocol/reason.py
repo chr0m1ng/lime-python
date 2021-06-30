@@ -11,4 +11,4 @@ class Reason:
         Returns:
             str: description with code
         """
-        return f'{self.description} (Code {self.code.value})'
+        return f'{self.description} (Code {self.code})'
