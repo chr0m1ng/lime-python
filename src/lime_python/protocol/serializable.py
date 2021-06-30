@@ -5,6 +5,7 @@ from humps import camelize, decamelize
 PRIVATE_TOKEN = '_'  # noqa: S105
 NODE_KEY_TOKEN = '_n'  # noqa: S105
 FORBIDDEN_KEYS = frozenset(('from', 'type'))
+NONSERIALIZABLE_TYPES = frozenset([int, float, bool])
 
 
 class Serializable:
@@ -110,9 +111,11 @@ class Serializable:
         Returns:
             Any: the serialized property
         """
-        return value.to_json() if isinstance(
-            value, Serializable
-        ) else str(value)
+        if isinstance(value, Serializable):
+            return value.to_json()
+        if type(value) in NONSERIALIZABLE_TYPES:  # noqa:WPS516
+            return value
+        return str(value)
 
     def __should_serialize_property(self, key: str, value) -> bool:
         return not key.startswith(PRIVATE_TOKEN) and value is not None
