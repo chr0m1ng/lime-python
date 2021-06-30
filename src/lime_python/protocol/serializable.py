@@ -110,7 +110,9 @@ class Serializable:
         Returns:
             Any: the serialized property
         """
-        return value.to_json() if isinstance(value, Serializable) else value
+        return value.to_json() if isinstance(
+            value, Serializable
+        ) else str(value)
 
     def __should_serialize_property(self, key: str, value) -> bool:
         return not key.startswith(PRIVATE_TOKEN) and value is not None
