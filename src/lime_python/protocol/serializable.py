@@ -5,7 +5,7 @@ from humps import camelize, decamelize
 PRIVATE_TOKEN = '_'  # noqa: S105
 NODE_KEY_TOKEN = '_n'  # noqa: S105
 FORBIDDEN_KEYS = frozenset(('from', 'type'))
-NONSERIALIZABLE_TYPES = frozenset([int, float, bool])
+NONSERIALIZABLE_TYPES = frozenset((int, float, bool))
 
 
 class Serializable:
